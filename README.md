@@ -1,3 +1,9 @@
+# MiddleAI Firefox Extension
+
+This repository contains a Firefox extension built with React and TypeScript.
+
+## Project Structure
+
 # AI Job Application Assistant
 
 An intelligent browser extension that streamlines the job application process using AI. Automatically fills out job applications, generates tailored resumes and cover letters, and helps track your application progress.
@@ -135,6 +141,103 @@ API documentation is available at `http://localhost:3000/api-docs` when running 
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
+
+## Development Setup
+
+### Frontend (Browser Extension)
+
+The frontend React application is located in the `extension` directory. To develop it:
+
+1. Navigate to the extension directory:
+   ```bash
+   cd extension
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. For development, start the development server:
+   ```bash
+   npm start
+   ```
+
+4. Build the production version:
+   ```bash
+   npm run build
+   ```
+   This will create a production build in the `extension/build` directory.
+
+**Important Notes:**
+- All npm commands must be run from within the `extension` directory
+- The build process requires you to be in the `extension` directory to locate necessary files like `public/index.html`
+
+#### Backend Setup
+
+1. **Production Environment Setup**
+   ```bash
+   cp .env.example .env.production
+   ```
+   Configure production environment variables:
+   ```
+   NODE_ENV=production
+   OPENAI_API_KEY=your_production_key
+   MONGODB_URI=your_production_mongodb_uri
+   JWT_SECRET=your_production_secret
+   ```
+
+2. **Docker Deployment**
+   ```bash
+   docker-compose -f docker-compose.prod.yml up -d
+   ```
+
+### Deployment
+
+#### Extension Deployment
+
+1. **Build the Extension**
+   ```bash
+   cd extension
+   npm install
+   npm run build
+   ```
+
+2. **Firefox Submission**
+   - Create a zip file of the `extension/build` directory
+   - Submit to [Firefox Add-ons](https://addons.mozilla.org/developers/)
+   - Follow Mozilla's [submission guidelines](https://extensionworkshop.com/documentation/publish/submitting-an-add-on/)
+
+3. **Chrome Web Store**
+   - Create a zip file of the `extension/build` directory
+   - Submit to [Chrome Web Store Developer Dashboard](https://chrome.google.com/webstore/devconsole/)
+   - Follow Google's [submission guidelines](https://developer.chrome.com/docs/webstore/publish/)
+
+#### Backend Deployment
+
+1. **Production Environment Setup**
+   ```bash
+   cp .env.example .env.production
+   ```
+   Configure production environment variables:
+   ```
+   NODE_ENV=production
+   OPENAI_API_KEY=your_production_key
+   MONGODB_URI=your_production_mongodb_uri
+   JWT_SECRET=your_production_secret
+   ```
+
+2. **Docker Deployment**
+   ```bash
+   docker-compose -f docker-compose.prod.yml up -d
+   ```
+
+## Project Dependencies
+
+The frontend uses:
+- React 18
+- TypeScript
+- react-scripts for build tooling
 
 
 

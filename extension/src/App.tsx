@@ -7,6 +7,6 @@ const App: React.FC = () => {
       <Popup />
     </div>
   );
-};
+}
 
 export default App;
