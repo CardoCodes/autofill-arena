@@ -1,13 +1,15 @@
-import type React from "react"
+import React from "react"
 import { useState, useEffect } from "react"
 import { SettingsIcon, Home, CarIcon as AutofillIcon, Sparkles, User, Sun, Moon } from "lucide-react"
 import { useSpring, animated } from "@react-spring/web"
-import HomePage from "./pages/HomePage"
-import AutofillPage from "./pages/AutofillPage"
-import AIPage from "./pages/AIPage"
-import ProfilePage from "./pages/ProfilePage"
-import JobDetailsPage from "./pages/JobDetailsPage"
-import SettingsPage from "./pages/SettingsPage"
+import HomePage from "./pages/HomePage.tsx"
+import AutofillPage from "./pages/AutofillPage.tsx"
+import AIPage from "./pages/AIPage.tsx"
+import ProfilePage from "./pages/ProfilePage.tsx"
+import JobDetailsPage from "./pages/JobDetailsPage.tsx"
+import SettingsPage from "./pages/SettingsPage.tsx"
+
+
 
 type Page = "home" | "autofill" | "ai" | "profile" | "job-details"
 
