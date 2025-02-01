@@ -1,4 +1,4 @@
-import React from "react"
+import type React from "react"
 import { X } from "lucide-react"
 import { useSpring, animated } from "@react-spring/web"
 import { useDrag } from "react-use-gesture"

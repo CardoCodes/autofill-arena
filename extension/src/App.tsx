@@ -1,5 +1,5 @@
 import React from 'react';
-import Popup from './popup/Popup.tsx';
+import Popup from './popup/Popup';
 
 const App: React.FC = () => {
   return (
@@ -7,6 +7,7 @@ const App: React.FC = () => {
       <Popup />
     </div>
   );
-}
+};
 
 export default App;
+
