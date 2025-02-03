@@ -25,13 +25,14 @@ An intelligent browser extension that streamlines the job application process us
 - Python (v3.9 or higher)
 - MongoDB
 - Docker (optional, for containerized deployment)
+- npm (v9 or higher)
 
 ### Installation
 
 1. Clone the repository:
 ```bash
 git clone https://github.com/cardocodes/middleai.git
-cd middleai
+cd middleai/extension  # Important: Navigate to extension directory
 ```
 
 2. Install dependencies:
@@ -70,19 +71,39 @@ cd ../extension
 npm run dev
 ```
 
+### Running the Extension
+
+For development:
+```bash
+npm run dev
+```
+
+To build for production:
+```bash
+npm run build:extension
+```
+
 ### Loading the Extension
 
 #### Chrome
-1. Open Chrome and navigate to `chrome://extensions/`
-2. Enable "Developer mode"
-3. Click "Load unpacked"
-4. Select the `extension/dist` directory
+1. Build the extension first:
+```bash
+npm run build:extension
+```
+2. Open Chrome and navigate to `chrome://extensions/`
+3. Enable "Developer mode"
+4. Click "Load unpacked"
+5. Select the `extension/dist` directory
 
 #### Firefox
-1. Open Firefox and navigate to `about:debugging`
-2. Click "This Firefox"
-3. Click "Load Temporary Add-on"
-4. Select the `manifest.json` file in the `extension/dist` directory
+1. Build the extension:
+```bash
+npm run build:extension
+```
+2. Open Firefox and navigate to `about:debugging`
+3. Click "This Firefox"
+4. Click "Load Temporary Add-on"
+5. Select the `manifest.json` file in the `extension/dist` directory
 
 ## 🏗️ Architecture
 
@@ -148,30 +169,26 @@ API documentation is available at `http://localhost:3000/api-docs` when running 
 
 The frontend React application is located in the `extension` directory. To develop it:
 
-1. Navigate to the extension directory:
-   ```bash
-   cd extension
-   ```
+1. Navigate to the extension directory (if not already there):
+```bash
+cd extension
+```
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+2. Start development server:
+```bash
+npm run dev
+```
 
-3. For development, start the development server:
-   ```bash
-   npm start
-   ```
-
-4. Build the production version:
-   ```bash
-   npm run build
-   ```
-   This will create a production build in the `extension/build` directory.
+3. Build production version:
+```bash
+npm run build:extension
+```
+This creates static files in the `dist` directory for browser extension loading.
 
 **Important Notes:**
-- All npm commands must be run from within the `extension` directory
-- The build process requires you to be in the `extension` directory to locate necessary files like `public/index.html`
+- Always run commands from the `extension` directory
+- Development server runs at http://localhost:3000
+- After building, refresh extension in browser to see changes
 
 #### Backend Setup
 
@@ -238,81 +255,3 @@ The frontend uses:
 - React 18
 - TypeScript
 - react-scripts for build tooling
-
-## 📋 TODO
-
-There might be a problem with the project dependency tree.
-It is likely not a bug in Create React App, but something you need to fix locally.
-
-The react-scripts package provided by Create React App requires a dependency:
-
-  "babel-jest": "^24.9.0"
-
-Don't try to install it manually: your package manager does it automatically.
-However, a different version of babel-jest was detected higher up in the tree:
-
-  C:\Users\Cardo\Workspace\middleai\node_modules\babel-jest (version: 27.5.1)
-
-Manually installing incompatible versions is known to cause hard-to-debug issues.
-
-If you would prefer to ignore this check, add SKIP_PREFLIGHT_CHECK=true to an .env file in your project.
-That will permanently disable this message but you might encounter other issues.
-
-To fix the dependency tree, try following the steps below in the exact order:
-
-  1. Delete package-lock.json (not package.json!) and/or yarn.lock in your project folder.
-  2. Delete node_modules in your project folder.
-  3. Remove "babel-jest" from dependencies and/or devDependencies in the package.json file in your project folder.
-  4. Run npm install or yarn, depending on the package manager you use.
-
-In most cases, this should be enough to fix the problem.
-If this has not helped, there are a few other things you can try:
-
-  5. If you used npm, install yarn (http://yarnpkg.com/) and repeat the above steps with it instead.
-     This may help because npm has known issues with package hoisting which may get resolved in future versions.
-
-  6. Check if C:\Users\Cardo\Workspace\middleai\node_modules\babel-jest is outside your project directory.
-     For example, you might have accidentally installed something in your home folder.
-
-  7. Try running npm ls babel-jest in your project folder.
-     This will tell you which other package (apart from the expected react-scripts) installed babel-jest.
-
-If nothing else helps, add SKIP_PREFLIGHT_CHECK=true to an .env file in your project.
-That would permanently disable this preflight check in case you want to proceed anyway.
-
-P.S. We know this message is long but please read the steps above :-) We hope you find them helpful!
-
-### Frontend
-- [ ] Set up basic extension structure
-- [ ] Implement popup UI components
-  - [ ] Home page
-  - [ ] Autofill page
-  - [ ] AI page
-  - [ ] Profile page
-  - [ ] Job details page
-- [ ] Add dark mode functionality
-- [ ] Implement browser storage
-- [ ] Add form detection logic
-
-### Backend
-- [ ] Set up API endpoints
-- [ ] Implement authentication
-- [ ] Create database schema
-- [ ] Add AI integration
-- [ ] Set up job matching service
-
-### Testing
-- [ ] Write unit tests
-- [ ] Add integration tests
-- [ ] Perform browser compatibility testing
-- [ ] Security testing
-
-### Documentation
-- [ ] API documentation
-- [ ] User guide
-- [ ] Developer setup guide
-- [ ] Deployment instructions
-
-
-
-
