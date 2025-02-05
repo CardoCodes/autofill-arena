@@ -98,38 +98,46 @@ const Popup: React.FC = () => {
       </main>
 
       {/* Footer */}
-      <footer className="flex justify-around items-center p-4 bg-gray-100 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600 transition-colors duration-300 z-10">
+      <footer className="flex justify-around items-center py-2 px-4 bg-gray-100 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600 transition-colors duration-300 z-10">
         <button
-          className={`flex flex-col items-center ${currentPage === "home" ? "text-blue-600" : "text-gray-600 dark:text-gray-300"} hover:text-blue-600 transition-colors`}
+          className={`flex flex-col items-center p-1 flex-1 ${
+            currentPage === "home" ? "text-blue-600" : "text-gray-600 dark:text-gray-300"
+          } hover:text-blue-600 transition-colors`}
           onClick={() => setCurrentPage("home")}
           aria-label="Home"
         >
-          <Home size={24} />
-          <span className="text-xs mt-1">Home</span>
+          <Home size={20} />
+          <span className="text-[10px] mt-0.5">Home</span>
         </button>
         <button
-          className={`flex flex-col items-center ${currentPage === "autofill" ? "text-blue-600" : "text-gray-600 dark:text-gray-300"} hover:text-blue-600 transition-colors`}
+          className={`flex flex-col items-center p-1 flex-1 ${
+            currentPage === "autofill" ? "text-blue-600" : "text-gray-600 dark:text-gray-300"
+          } hover:text-blue-600 transition-colors`}
           onClick={() => setCurrentPage("autofill")}
           aria-label="Autofill"
         >
-          <AutofillIcon size={24} />
-          <span className="text-xs mt-1">Autofill</span>
+          <AutofillIcon size={20} />
+          <span className="text-[10px] mt-0.5">Autofill</span>
         </button>
         <button
-          className={`flex flex-col items-center ${currentPage === "ai" ? "text-blue-600" : "text-gray-600 dark:text-gray-300"} hover:text-blue-600 transition-colors`}
+          className={`flex flex-col items-center p-1 flex-1 ${
+            currentPage === "ai" ? "text-blue-600" : "text-gray-600 dark:text-gray-300"
+          } hover:text-blue-600 transition-colors`}
           onClick={() => setCurrentPage("ai")}
           aria-label="AI"
         >
-          <Sparkles size={24} />
-          <span className="text-xs mt-1">AI</span>
+          <Sparkles size={20} />
+          <span className="text-[10px] mt-0.5">AI</span>
         </button>
         <button
-          className={`flex flex-col items-center ${currentPage === "profile" ? "text-blue-600" : "text-gray-600 dark:text-gray-300"} hover:text-blue-600 transition-colors`}
+          className={`flex flex-col items-center p-1 flex-1 ${
+            currentPage === "profile" ? "text-blue-600" : "text-gray-600 dark:text-gray-300"
+          } hover:text-blue-600 transition-colors`}
           onClick={() => setCurrentPage("profile")}
           aria-label="Profile"
         >
-          <User size={24} />
-          <span className="text-xs mt-1">Profile</span>
+          <User size={20} />
+          <span className="text-[10px] mt-0.5">Profile</span>
         </button>
       </footer>
 

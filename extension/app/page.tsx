@@ -2,6 +2,6 @@
 
 import App from "../src/App"
 
-export default function SyntheticV0PageForDeployment() {
+export default function SyntheticPageForDeployment() {
   return <App />
 }
