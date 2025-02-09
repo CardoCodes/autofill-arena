@@ -33,7 +33,37 @@ class ResumeParser:
         self.pdf_path = pdf_path
         self.raw_text = ""
         self.resume = Resume()
-    
+        
+        # Expanded section header variations
+        self.section_headers = {
+            'experience': {
+                'work experience', 'experience', 'employment history', 
+                'professional experience', 'work history', 'career history',
+                'relevant experience', 'professional background', 'career experience'
+            },
+            'education': {
+                'education', 'educational background', 'academic background',
+                'academic history', 'academics', 'qualifications'
+            },
+            'skills': {
+                'skills', 'technical skills', 'core competencies',
+                'competencies', 'expertise', 'proficiencies',
+                'professional skills', 'key skills'
+            },
+            'projects': {
+                'projects', 'personal projects', 'academic projects',
+                'professional projects', 'key projects'
+            },
+            'contact': {
+                'contact', 'contact information', 'personal information',
+                'personal details'
+            },
+            'links': {
+                'links', 'websites', 'social media', 'profiles',
+                'online presence'
+            }
+        }
+
     def extract_text(self) -> None:
         """Extract text from PDF using pdfminer"""
         try:
@@ -48,101 +78,146 @@ class ResumeParser:
 
         lines = self.raw_text.split('\n')
         current_section = None
+        section_content = []
 
         for line in lines:
-            # Detect section headers
-            if self._is_section_header(line):
-                current_section = line.strip().lower()
+            line = line.strip()
+            if not line:
                 continue
+                
+            is_header, section_name = self._is_section_header(line)
+            
+            if is_header:
+                # Process previous section before moving to new one
+                if current_section and section_content:
+                    self._process_section(current_section, section_content)
+                current_section = section_name
+                section_content = []
+            else:
+                section_content.append(line)
 
-            # Process content based on current section
-            if current_section:
-                self._process_line(line, current_section)
+        # Process the last section
+        if current_section and section_content:
+            self._process_section(current_section, section_content)
 
         return self.resume
 
-    def _is_section_header(self, line: str) -> bool:
-        """Identify section headers using common resume section titles"""
-        section_headers = {
-            'contact', 'education', 'experience', 
-            'work experience', 'skills', 'projects',
-            'technical skills', 'links', 'certifications'
-        }
-        return any(re.match(fr'^{re.escape(header)}[\s:]?$', line, re.I) 
-                   for header in section_headers)
+    def _is_section_header(self, line: str) -> tuple[bool, str]:
+        """Improved section header detection with case insensitivity and common patterns"""
+        cleaned = re.sub(r'[:•\-*\s]+', '', line.lower())
+        
+        for section, variations in self.section_headers.items():
+            if any(v.replace(' ', '') in cleaned for v in variations):
+                return True, section
+                
+        # Special case for contact info at top
+        if not self.resume.name and any(w in cleaned for w in {'contact', 'personal'}):
+            return True, 'contact'
+            
+        return False, ""
 
-    def _process_line(self, line: str, current_section: str) -> None:
-        """Process lines based on current section"""
-        line = line.strip()
-        if not line:
-            return
-
-        section = current_section.replace(' ', '_')
+    def _process_section(self, section: str, content: List[str]) -> None:
+        """Process a complete section of content"""
         processor = getattr(self, f'_process_{section}', None)
         if processor:
-            processor(line)
+            processor(content)
         else:
-            self._process_general(line, current_section)
+            self._process_general(content, section)
 
-    def _process_contact(self, line: str) -> None:
+    def _process_experience(self, content: List[str]) -> None:
+        """Parse work experience section with improved detection"""
+        current_job = None
+        
+        for line in content:
+            # Try different job entry patterns
+            job_patterns = [
+                # Title | Company | Dates
+                r'^(.+?)\s*[|•-]\s*(.+?)\s*[|•-]\s*(.+)$',
+                # Title at Company, Dates
+                r'^(.+?)\s+(?:at|@)\s+(.+?),\s*(.+)$',
+                # Company - Title - Dates
+                r'^(.+?)\s*[-–]\s*(.+?)\s*[-–]\s*(.+)$'
+            ]
+            
+            matched = False
+            for pattern in job_patterns:
+                match = re.match(pattern, line)
+                if match:
+                    if current_job:
+                        self.resume.work_experience.append(current_job)
+                    current_job = Job(
+                        title=match.group(1).strip(),
+                        company=match.group(2).strip(),
+                        dates=match.group(3).strip()
+                    )
+                    matched = True
+                    break
+            
+            if not matched and current_job:
+                # Handle bullet points and other description lines
+                if line.startswith('•') or line.startswith('-'):
+                    line = line.lstrip('•- ').strip()
+                current_job.description.append(line)
+                
+        # Add the last job
+        if current_job:
+            self.resume.work_experience.append(current_job)
+
+    def _process_contact(self, content: List[str]) -> None:
         """Extract contact information"""
-        if not self.resume.name:
-            self.resume.name = line.title()
-        else:
-            if '@' in line:
-                self.resume.email = line
-            elif any(char.isdigit() for char in line):
-                self.resume.phone = line
+        for line in content:
+            if not self.resume.name:
+                self.resume.name = line.title()
             else:
-                self.resume.links.append(line)
+                if '@' in line:
+                    self.resume.email = line
+                elif any(char.isdigit() for char in line):
+                    self.resume.phone = line
+                else:
+                    self.resume.links.append(line)
 
-    def _process_education(self, line: str) -> None:
+    def _process_education(self, content: List[str]) -> None:
         """Parse education section"""
-        if not self.resume.education or '•' in line:
-            # Assume new education entry starts with bullet point
-            self.resume.education.append(Education("", "", ""))
-            return
+        current_education = None
         
-        # Extract dates using common patterns
-        date_match = re.search(r'(\d{4}[-–]\d{4}|[A-Za-z]+\s\d{4}\s?[-–]\s?[A-Za-z]+\s\d{4})', line)
-        if date_match:
-            self.resume.education[-1].dates = date_match.group(0)
-            line = line.replace(date_match.group(0), '')
-        
-        if not self.resume.education[-1].degree:
-            self.resume.education[-1].degree = line.strip()
-        else:
-            self.resume.education[-1].institution = line.strip()
+        for line in content:
+            if '•' in line or not current_education:
+                # Start new education entry
+                current_education = Education("", "", "")
+                self.resume.education.append(current_education)
+                
+            # Extract dates using common patterns
+            date_match = re.search(r'(\d{4}[-–]\d{4}|[A-Za-z]+\s\d{4}\s?[-–]\s?[A-Za-z]+\s\d{4})', line)
+            if date_match:
+                current_education.dates = date_match.group(0)
+                line = line.replace(date_match.group(0), '')
+            
+            if not current_education.degree:
+                current_education.degree = line.strip()
+            else:
+                current_education.institution = line.strip()
 
-    def _process_experience(self, line: str) -> None:
-        """Parse work experience section"""
-        # Job title pattern: "Software Engineer | Company Name | Jun 2020 - Present"
-        exp_match = re.match(r'(.+?)\s*[|•-]\s*(.+?)\s*[|•-]\s*(.+)', line)
-        if exp_match:
-            self.resume.work_experience.append(Job(
-                title=exp_match.group(1).strip(),
-                company=exp_match.group(2).strip(),
-                dates=exp_match.group(3).strip()
-            ))
-        elif self.resume.work_experience and line.startswith('• '):
-            self.resume.work_experience[-1].description.append(line[2:].strip())
-
-    def _process_skills(self, line: str) -> None:
+    def _process_skills(self, content: List[str]) -> None:
         """Parse skills section"""
-        skills = re.split(r',\s*|\s*•\s*', line)
-        self.resume.skills.extend([s.strip() for s in skills if s.strip()])
+        for line in content:
+            skills = re.split(r',\s*|\s*•\s*', line)
+            self.resume.skills.extend([s.strip() for s in skills if s.strip()])
 
-    def _process_projects(self, line: str) -> None:
+    def _process_projects(self, content: List[str]) -> None:
         """Parse projects section"""
-        if line.startswith('• '):
-            self.resume.projects.append(line[2:].strip())
+        for line in content:
+            if line.startswith('• '):
+                self.resume.projects.append(line[2:].strip())
+            else:
+                self.resume.projects.append(line.strip())
 
-    def _process_links(self, line: str) -> None:
+    def _process_links(self, content: List[str]) -> None:
         """Parse links section"""
-        if 'http' in line:
-            self.resume.links.append(line.strip())
+        for line in content:
+            if 'http' in line:
+                self.resume.links.append(line.strip())
 
-    def _process_general(self, line: str, section: str) -> None:
+    def _process_general(self, content: List[str], section: str) -> None:
         """Fallback processor for unhandled sections"""
         pass
 
