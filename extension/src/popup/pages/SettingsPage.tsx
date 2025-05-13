@@ -2,6 +2,13 @@ import type React from "react"
 import { X } from "lucide-react"
 import { useSpring, animated } from "@react-spring/web"
 import { useDrag } from "react-use-gesture"
+import { Button } from "../../../components/ui/button"
+import { Input } from "../../../components/ui/input"
+import { Label } from "../../../components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select"
+import { Checkbox } from "../../../components/ui/checkbox"
+import { cn } from "../../../lib/utils"
+import { Separator } from "../../../components/ui/separator"
 
 interface SettingsPageProps {
   onClose: () => void
@@ -32,142 +39,148 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ onClose }) => {
         y,
         touchAction: "none",
       }}
-      className="h-full w-full bg-white dark:bg-gray-800 rounded-t-lg shadow-lg overflow-hidden flex flex-col"
+      className="h-full w-full bg-background rounded-t-lg shadow-lg overflow-hidden flex flex-col"
     >
-      <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+      <div className="p-4 border-b flex justify-between items-center">
         <h2 className="text-xl font-semibold">Settings</h2>
-        <button
-          onClick={onClose}
-          className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-        >
+        <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full">
           <X size={24} />
-        </button>
+          <span className="sr-only">Close</span>
+        </Button>
       </div>
       <div className="flex-grow overflow-y-auto">
         <div className="p-4 space-y-6">
           <div>
             <h3 className="text-lg font-semibold mb-2">General</h3>
             <div className="space-y-4">
-              <div>
-                <label htmlFor="language" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Language
-                </label>
-                <select
-                  id="language"
-                  name="language"
-                  className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                >
-                  <option>English</option>
-                  <option>Spanish</option>
-                  <option>French</option>
-                  <option>German</option>
-                  <option>Chinese</option>
-                </select>
+              <div className="grid w-full items-center gap-1.5">
+                <Label htmlFor="language">Language</Label>
+                <Select defaultValue="english">
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select language" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="english">English</SelectItem>
+                    <SelectItem value="spanish">Spanish</SelectItem>
+                    <SelectItem value="french">French</SelectItem>
+                    <SelectItem value="german">German</SelectItem>
+                    <SelectItem value="chinese">Chinese</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              <div>
-                <label htmlFor="theme" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Theme
-                </label>
-                <select
-                  id="theme"
-                  name="theme"
-                  className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                >
-                  <option>Light</option>
-                  <option>Dark</option>
-                  <option>System</option>
-                </select>
+              <div className="grid w-full items-center gap-1.5">
+                <Label htmlFor="theme">Theme</Label>
+                <Select defaultValue="light">
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select theme" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="light">Light</SelectItem>
+                    <SelectItem value="dark">Dark</SelectItem>
+                    <SelectItem value="system">System</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </div>
+          
+          <Separator className="my-4" />
+          
           <div>
             <h3 className="text-lg font-semibold mb-2">Notifications</h3>
-            <div className="space-y-2">
-              <label className="flex items-center">
-                <input type="checkbox" className="form-checkbox h-5 w-5 text-blue-600" />
-                <span className="ml-2 text-gray-700 dark:text-gray-300">Enable push notifications</span>
-              </label>
-              <label className="flex items-center">
-                <input type="checkbox" className="form-checkbox h-5 w-5 text-blue-600" />
-                <span className="ml-2 text-gray-700 dark:text-gray-300">Email notifications</span>
-              </label>
-              <label className="flex items-center">
-                <input type="checkbox" className="form-checkbox h-5 w-5 text-blue-600" />
-                <span className="ml-2 text-gray-700 dark:text-gray-300">Job match alerts</span>
-              </label>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox id="push-notifications" />
+                <Label htmlFor="push-notifications">Enable push notifications</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox id="email-notifications" />
+                <Label htmlFor="email-notifications">Email notifications</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox id="job-match-alerts" />
+                <Label htmlFor="job-match-alerts">Job match alerts</Label>
+              </div>
             </div>
           </div>
+          
+          <Separator className="my-4" />
+          
           <div>
             <h3 className="text-lg font-semibold mb-2">Privacy</h3>
-            <div className="space-y-2">
-              <label className="flex items-center">
-                <input type="checkbox" className="form-checkbox h-5 w-5 text-blue-600" />
-                <span className="ml-2 text-gray-700 dark:text-gray-300">Allow data collection for personalization</span>
-              </label>
-              <label className="flex items-center">
-                <input type="checkbox" className="form-checkbox h-5 w-5 text-blue-600" />
-                <span className="ml-2 text-gray-700 dark:text-gray-300">Share usage statistics</span>
-              </label>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox id="data-collection" />
+                <Label htmlFor="data-collection">Allow data collection for personalization</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox id="usage-statistics" />
+                <Label htmlFor="usage-statistics">Share usage statistics</Label>
+              </div>
             </div>
           </div>
+          
+          <Separator className="my-4" />
+          
           <div>
             <h3 className="text-lg font-semibold mb-2">Autofill Settings</h3>
             <div className="space-y-4">
-              <div>
-                <label
-                  htmlFor="autofill-speed"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                >
-                  Autofill Speed
-                </label>
-                <select
-                  id="autofill-speed"
-                  name="autofill-speed"
-                  className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                >
-                  <option>Fast</option>
-                  <option>Medium</option>
-                  <option>Slow</option>
-                </select>
+              <div className="grid w-full items-center gap-1.5">
+                <Label htmlFor="autofill-speed">Autofill Speed</Label>
+                <Select defaultValue="medium">
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select speed" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="fast">Fast</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="slow">Slow</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              <label className="flex items-center">
-                <input type="checkbox" className="form-checkbox h-5 w-5 text-blue-600" />
-                <span className="ml-2 text-gray-700 dark:text-gray-300">Auto-submit forms after filling</span>
-              </label>
+              <div className="flex items-center space-x-2">
+                <Checkbox id="auto-submit" />
+                <Label htmlFor="auto-submit">Auto-submit forms after filling</Label>
+              </div>
             </div>
           </div>
+          
+          <Separator className="my-4" />
+          
           <div>
             <h3 className="text-lg font-semibold mb-2">AI Assistant</h3>
             <div className="space-y-4">
-              <div>
-                <label htmlFor="ai-model" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  AI Model
-                </label>
-                <select
-                  id="ai-model"
-                  name="ai-model"
-                  className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                >
-                  <option>GPT-3.5</option>
-                  <option>GPT-4</option>
-                  <option>Custom Model</option>
-                </select>
+              <div className="grid w-full items-center gap-1.5">
+                <Label htmlFor="ai-model">AI Model</Label>
+                <Select defaultValue="gpt3.5">
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select AI model" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="gpt3.5">GPT-3.5</SelectItem>
+                    <SelectItem value="gpt4">GPT-4</SelectItem>
+                    <SelectItem value="custom">Custom Model</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              <label className="flex items-center">
-                <input type="checkbox" className="form-checkbox h-5 w-5 text-blue-600" />
-                <span className="ml-2 text-gray-700 dark:text-gray-300">Use AI for resume optimization</span>
-              </label>
+              <div className="flex items-center space-x-2">
+                <Checkbox id="resume-optimization" />
+                <Label htmlFor="resume-optimization">Use AI for resume optimization</Label>
+              </div>
             </div>
           </div>
+          
+          <Separator className="my-4" />
+          
           <div>
             <h3 className="text-lg font-semibold mb-2">Data Management</h3>
             <div className="space-y-4">
-              <button className="w-full bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors duration-200">
+              <Button variant="destructive" className="w-full">
                 Clear All Data
-              </button>
-              <button className="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors duration-200">
+              </Button>
+              <Button className="w-full">
                 Export Data
-              </button>
+              </Button>
             </div>
           </div>
         </div>
