@@ -45,4 +45,3 @@ const HomePage: React.FC<HomePageProps> = ({ onSelectJob }) => {
 };
 
 export default HomePage;
-

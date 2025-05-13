@@ -52,4 +52,3 @@ const AIPage: React.FC = () => {
 };
 
 export default AIPage;
-

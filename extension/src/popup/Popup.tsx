@@ -1,20 +1,18 @@
+"use client"
+
 import type React from "react"
 import { useState, useEffect } from "react"
-import { SettingsIcon, Home, CarIcon as AutofillIcon, Sparkles, User, Sun, Moon } from "lucide-react"
+import { SettingsIcon, User, FileText, Sun, Moon } from "lucide-react"
 import { useSpring, animated } from "@react-spring/web"
-import HomePage from "./pages/HomePage"
-import AutofillPage from "./pages/AutofillPage"
-import AIPage from "./pages/AIPage"
 import ProfilePage from "./pages/ProfilePage"
-import JobDetailsPage from "./pages/JobDetailsPage"
+import AutofillPage from "./pages/AutofillPage"
 import SettingsPage from "./pages/SettingsPage"
 
-type Page = "home" | "autofill" | "ai" | "profile" | "job-details"
+type Page = "autofill" | "profile"
 
 const Popup: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState<Page>("home")
+  const [currentPage, setCurrentPage] = useState<Page>("autofill")
   const [isDarkMode, setIsDarkMode] = useState(false)
-  const [selectedJobId, setSelectedJobId] = useState<string | null>(null)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
 
   useEffect(() => {
@@ -36,23 +34,12 @@ const Popup: React.FC = () => {
 
   const renderPage = () => {
     switch (currentPage) {
-      case "home":
-        return (
-          <HomePage
-            onSelectJob={(jobId) => {
-              setSelectedJobId(jobId)
-              setCurrentPage("job-details")
-            }}
-          />
-        )
       case "autofill":
         return <AutofillPage />
-      case "ai":
-        return <AIPage />
       case "profile":
         return <ProfilePage />
-      case "job-details":
-        return selectedJobId ? <JobDetailsPage jobId={selectedJobId} onBack={() => setCurrentPage("home")} /> : null
+      default:
+        return <AutofillPage />
     }
   }
 
@@ -98,46 +85,22 @@ const Popup: React.FC = () => {
       </main>
 
       {/* Footer */}
-      <footer className="flex justify-around items-center py-2 px-4 bg-gray-100 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600 transition-colors duration-300 z-10">
+      <footer className="flex justify-around items-center p-4 bg-gray-100 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600 transition-colors duration-300 z-10">
         <button
-          className={`flex flex-col items-center p-1 flex-1 ${
-            currentPage === "home" ? "text-blue-600" : "text-gray-600 dark:text-gray-300"
-          } hover:text-blue-600 transition-colors`}
-          onClick={() => setCurrentPage("home")}
-          aria-label="Home"
-        >
-          <Home size={20} />
-          <span className="text-[10px] mt-0.5">Home</span>
-        </button>
-        <button
-          className={`flex flex-col items-center p-1 flex-1 ${
-            currentPage === "autofill" ? "text-blue-600" : "text-gray-600 dark:text-gray-300"
-          } hover:text-blue-600 transition-colors`}
+          className={`flex flex-col items-center ${currentPage === "autofill" ? "text-blue-600" : "text-gray-600 dark:text-gray-300"} hover:text-blue-600 transition-colors`}
           onClick={() => setCurrentPage("autofill")}
           aria-label="Autofill"
         >
-          <AutofillIcon size={20} />
-          <span className="text-[10px] mt-0.5">Autofill</span>
+          <FileText size={24} />
+          <span className="text-xs mt-1">Autofill</span>
         </button>
         <button
-          className={`flex flex-col items-center p-1 flex-1 ${
-            currentPage === "ai" ? "text-blue-600" : "text-gray-600 dark:text-gray-300"
-          } hover:text-blue-600 transition-colors`}
-          onClick={() => setCurrentPage("ai")}
-          aria-label="AI"
-        >
-          <Sparkles size={20} />
-          <span className="text-[10px] mt-0.5">AI</span>
-        </button>
-        <button
-          className={`flex flex-col items-center p-1 flex-1 ${
-            currentPage === "profile" ? "text-blue-600" : "text-gray-600 dark:text-gray-300"
-          } hover:text-blue-600 transition-colors`}
+          className={`flex flex-col items-center ${currentPage === "profile" ? "text-blue-600" : "text-gray-600 dark:text-gray-300"} hover:text-blue-600 transition-colors`}
           onClick={() => setCurrentPage("profile")}
           aria-label="Profile"
         >
-          <User size={20} />
-          <span className="text-[10px] mt-0.5">Profile</span>
+          <User size={24} />
+          <span className="text-xs mt-1">Profile</span>
         </button>
       </footer>
 
@@ -153,4 +116,3 @@ const Popup: React.FC = () => {
 }
 
 export default Popup
-

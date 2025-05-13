@@ -177,4 +177,3 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ onClose }) => {
 }
 
 export default SettingsPage
-

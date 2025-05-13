@@ -31,4 +31,3 @@ input:checked ~ .dot {
 input:checked ~ .block {
   background-color: #4299e1;
 }
-

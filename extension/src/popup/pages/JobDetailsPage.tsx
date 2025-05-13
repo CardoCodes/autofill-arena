@@ -86,4 +86,3 @@ const JobDetailsPage: React.FC<JobDetailsPageProps> = ({ jobId, onBack }) => {
 };
 
 export default JobDetailsPage;
-

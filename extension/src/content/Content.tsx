@@ -28,4 +28,3 @@ root.id = 'ai-job-assistant-root';
 document.body.appendChild(root);
 
 ReactDOM.render(<Content />, root);
-

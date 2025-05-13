@@ -1,7 +1,8 @@
-"use client"
-
+import type React from "react"
 import App from "../src/App"
 
-export default function SyntheticPageForDeployment() {
+const Page: React.FC = () => {
   return <App />
 }
+
+export default Page
