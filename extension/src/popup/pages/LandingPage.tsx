@@ -2,7 +2,8 @@
 
 import type React from "react"
 import { useState } from "react"
-import { Github, Mail, Linkedin, ArrowRight, Loader2 } from "lucide-react"
+import { Github, Linkedin, ArrowRight, Loader2 } from "lucide-react"
+import { GoogleIcon } from "../../components/icons/GoogleIcon"
 import { authService } from "../../services/authService"
 
 interface LandingPageProps {
@@ -75,10 +76,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthStateChange }) => {
         </div>
 
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-          <div className="flex justify-between mb-6">
+          <div className="flex mb-6">
             <button
               onClick={() => setAuthMode("signin")}
-              className={`px-4 py-2 text-sm font-medium ${
+              className={`flex-1 px-4 py-2 text-sm font-medium ${
                 authMode === "signin"
                   ? "text-blue-600 border-b-2 border-blue-600"
                   : "text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
@@ -88,7 +89,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthStateChange }) => {
             </button>
             <button
               onClick={() => setAuthMode("signup")}
-              className={`px-4 py-2 text-sm font-medium ${
+              className={`flex-1 px-4 py-2 text-sm font-medium ${
                 authMode === "signup"
                   ? "text-blue-600 border-b-2 border-blue-600"
                   : "text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
@@ -207,7 +208,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthStateChange }) => {
                   disabled={loading}
                   className="w-full flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50"
                 >
-                  <Mail className="h-5 w-5" />
+                  <GoogleIcon className="h-5 w-5" />
                 </button>
                 <button
                   onClick={() => handleOAuthSignIn("linkedin")}

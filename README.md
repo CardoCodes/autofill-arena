@@ -48,6 +48,38 @@ npm run build:extension
 | `npm test`            | Run frontend tests           |
 | `npm run build`       | Create production build      |
 
+## Dependencies
+
+### Main Dependencies
+- React & React DOM (v19)
+- Next.js (v15.2.4)
+- Supabase Client (`@supabase/supabase-js`)
+- Next Themes
+- Radix UI Components:
+  - Dialog, Aspect Ratio, Slot, Accordion, Alert Dialog, Avatar, Checkbox, etc.
+- Form Handling:
+  - React Hook Form (with Zod validation)
+- Styling:
+  - Tailwind CSS
+  - Class Variance Authority
+  - Tailwind Merge
+  - CLSX
+- UI Components:
+  - Lucide React (icons)
+  - Sonner (toast notifications)
+  - Embla Carousel
+  - React Day Picker
+  - Recharts
+
+### Dev Dependencies
+- TypeScript (v5)
+- Type Definitions:
+  - @types/react
+  - @types/react-dom
+  - @types/node
+- PostCSS
+- Tailwind CSS
+
 ## Tech Stack
 
 - React + TypeScript
