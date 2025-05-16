@@ -9,3 +9,6 @@ backend/core/__pycache__
 backend/data
 extension/node_modules
 extension/.next
+.env
+.env.local
+

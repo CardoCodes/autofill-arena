@@ -93,3 +93,14 @@ PRs welcome! Please follow standard GitHub workflow:
 1. Fork repo
 2. Create feature branch
 3. Submit PR
+
+## Supabase Setup
+
+1. Create a project at [supabase.com](https://supabase.com/)
+2. Get your API credentials from Project Settings → API
+3. Create `.env.local` with:
+```
+NEXT_PUBLIC_SUPABASE_URL=YOUR_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
+```
+4. Run `npm run build`
