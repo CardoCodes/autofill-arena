@@ -16,7 +16,7 @@ AI-powered browser extension that automates job applications with smart form fil
 ```bash
 git clone https://github.com/cardocodes/middleai.git
 cd middleai/extension
-npm install
+npm install --legacy-peer-deps
 ```
 
 2. Set up environment:
