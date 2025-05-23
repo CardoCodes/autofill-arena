@@ -5,6 +5,11 @@ import { useState, useEffect } from "react"
 import { Plus, Trash2, Save, Loader2 } from "lucide-react"
 import type { ProfileWithDetails } from "../../services/profileService"
 import { profileService } from "../../services/profileService"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 interface ProfilePageProps {
   user: any
@@ -227,82 +232,49 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdat
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Profile</h2>
         {saveMessage && (
-          <div className={`text-sm ${saveMessage.includes("Error") ? "text-red-500" : "text-green-500"}`}>
+          <div className={`text-sm ${saveMessage.includes("Error") ? "text-destructive" : "text-green-500"}`}>
             {saveMessage}
           </div>
         )}
       </div>
 
       {/* Personal Information */}
-      <section>
-        <h3 className="text-lg font-semibold mb-2">Personal Information</h3>
-        <div className="space-y-4">
-          <div>
-            <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Full Name
-            </label>
-            <input
-              type="text"
-              id="fullName"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-            />
+      <Card>
+        <CardHeader>
+          <CardTitle>Personal Information</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="fullName">Full Name</Label>
+            <Input type="text" id="fullName" value={fullName} onChange={(e) => setFullName(e.target.value)} />
           </div>
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={user?.email || ""}
-              disabled
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100 dark:bg-gray-600 dark:border-gray-600 dark:text-gray-300"
-            />
-            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Email cannot be changed</p>
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input type="email" id="email" value={user?.email || ""} disabled className="bg-muted" />
+            <p className="text-xs text-muted-foreground">Email cannot be changed</p>
           </div>
-          <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Phone
-            </label>
-            <input
-              type="tel"
-              id="phone"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-            />
+          <div className="space-y-2">
+            <Label htmlFor="phone">Phone</Label>
+            <Input type="tel" id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
           </div>
-          <div>
-            <label htmlFor="location" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Location
-            </label>
-            <input
-              type="text"
-              id="location"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-            />
+          <div className="space-y-2">
+            <Label htmlFor="location">Location</Label>
+            <Input type="text" id="location" value={location} onChange={(e) => setLocation(e.target.value)} />
           </div>
-        </div>
-      </section>
+        </CardContent>
+      </Card>
 
       {/* Job History */}
-      <section>
-        <h3 className="text-lg font-semibold mb-2">Job History</h3>
-        {jobHistory.map((job, index) => (
-          <div key={job.id} className="mb-4 p-4 border border-gray-200 rounded-md dark:border-gray-700">
-            <div className="space-y-4">
-              <div>
-                <label
-                  htmlFor={`company-${job.id}`}
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Company
-                </label>
-                <input
+      <Card>
+        <CardHeader>
+          <CardTitle>Job History</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {jobHistory.map((job, index) => (
+            <div key={job.id} className="p-4 border rounded-md space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor={`company-${job.id}`}>Company</Label>
+                <Input
                   type="text"
                   id={`company-${job.id}`}
                   value={job.company || ""}
@@ -311,17 +283,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdat
                     updatedJobs[index].company = e.target.value
                     setJobHistory(updatedJobs)
                   }}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 />
               </div>
-              <div>
-                <label
-                  htmlFor={`position-${job.id}`}
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Position
-                </label>
-                <input
+              <div className="space-y-2">
+                <Label htmlFor={`position-${job.id}`}>Position</Label>
+                <Input
                   type="text"
                   id={`position-${job.id}`}
                   value={job.position || ""}
@@ -330,18 +296,12 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdat
                     updatedJobs[index].position = e.target.value
                     setJobHistory(updatedJobs)
                   }}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 />
               </div>
-              <div className="flex space-x-4">
-                <div className="flex-1">
-                  <label
-                    htmlFor={`startDate-${job.id}`}
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                  >
-                    Start Date
-                  </label>
-                  <input
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor={`startDate-${job.id}`}>Start Date</Label>
+                  <Input
                     type="date"
                     id={`startDate-${job.id}`}
                     value={job.start_date || ""}
@@ -350,17 +310,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdat
                       updatedJobs[index].start_date = e.target.value
                       setJobHistory(updatedJobs)
                     }}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                 </div>
-                <div className="flex-1">
-                  <label
-                    htmlFor={`endDate-${job.id}`}
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                  >
-                    End Date
-                  </label>
-                  <input
+                <div className="space-y-2">
+                  <Label htmlFor={`endDate-${job.id}`}>End Date</Label>
+                  <Input
                     type="date"
                     id={`endDate-${job.id}`}
                     value={job.end_date || ""}
@@ -369,18 +323,12 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdat
                       updatedJobs[index].end_date = e.target.value
                       setJobHistory(updatedJobs)
                     }}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                 </div>
               </div>
-              <div>
-                <label
-                  htmlFor={`jobDescription-${job.id}`}
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Description
-                </label>
-                <textarea
+              <div className="space-y-2">
+                <Label htmlFor={`jobDescription-${job.id}`}>Description</Label>
+                <Textarea
                   id={`jobDescription-${job.id}`}
                   value={job.description || ""}
                   onChange={(e) => {
@@ -389,60 +337,56 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdat
                     setJobHistory(updatedJobs)
                   }}
                   rows={3}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                ></textarea>
+                />
               </div>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => removeItem(setJobHistory, jobHistory, job.id, "job")}
+                className="mt-2"
+              >
+                <Trash2 size={16} className="mr-1" />
+                Remove
+              </Button>
             </div>
-            <button
-              onClick={() => removeItem(setJobHistory, jobHistory, job.id, "job")}
-              className="mt-2 flex items-center text-red-600 hover:text-red-800"
-            >
-              <Trash2 size={16} className="mr-1" />
-              Remove
-            </button>
-          </div>
-        ))}
-        <button
-          onClick={() => addItem(setJobHistory, jobHistory, "job")}
-          className="flex items-center text-blue-600 hover:text-blue-800"
-        >
-          <Plus size={16} className="mr-1" />
-          Add Job
-        </button>
-      </section>
+          ))}
+          <Button variant="outline" size="sm" onClick={() => addItem(setJobHistory, jobHistory, "job")}>
+            <Plus size={16} className="mr-1" />
+            Add Job
+          </Button>
+        </CardContent>
+      </Card>
 
       {/* Skills */}
-      <section>
-        <h3 className="text-lg font-semibold mb-2">Skills</h3>
-        <div>
-          <label htmlFor="skills" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            List your skills (comma-separated)
-          </label>
-          <input
-            type="text"
-            id="skills"
-            value={skills}
-            onChange={(e) => setSkills(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-            placeholder="e.g. JavaScript, React, Node.js"
-          />
-        </div>
-      </section>
+      <Card>
+        <CardHeader>
+          <CardTitle>Skills</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            <Label htmlFor="skills">List your skills (comma-separated)</Label>
+            <Input
+              type="text"
+              id="skills"
+              value={skills}
+              onChange={(e) => setSkills(e.target.value)}
+              placeholder="e.g. JavaScript, React, Node.js"
+            />
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Projects */}
-      <section>
-        <h3 className="text-lg font-semibold mb-2">Projects</h3>
-        {projects.map((project, index) => (
-          <div key={project.id} className="mb-4 p-4 border border-gray-200 rounded-md dark:border-gray-700">
-            <div className="space-y-4">
-              <div>
-                <label
-                  htmlFor={`projectName-${project.id}`}
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Project Name
-                </label>
-                <input
+      <Card>
+        <CardHeader>
+          <CardTitle>Projects</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {projects.map((project, index) => (
+            <div key={project.id} className="p-4 border rounded-md space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor={`projectName-${project.id}`}>Project Name</Label>
+                <Input
                   type="text"
                   id={`projectName-${project.id}`}
                   value={project.name || ""}
@@ -451,17 +395,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdat
                     updatedProjects[index].name = e.target.value
                     setProjects(updatedProjects)
                   }}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 />
               </div>
-              <div>
-                <label
-                  htmlFor={`projectDescription-${project.id}`}
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Description
-                </label>
-                <textarea
+              <div className="space-y-2">
+                <Label htmlFor={`projectDescription-${project.id}`}>Description</Label>
+                <Textarea
                   id={`projectDescription-${project.id}`}
                   value={project.description || ""}
                   onChange={(e) => {
@@ -470,17 +408,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdat
                     setProjects(updatedProjects)
                   }}
                   rows={3}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                ></textarea>
+                />
               </div>
-              <div>
-                <label
-                  htmlFor={`projectTechnologies-${project.id}`}
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Technologies Used
-                </label>
-                <input
+              <div className="space-y-2">
+                <Label htmlFor={`projectTechnologies-${project.id}`}>Technologies Used</Label>
+                <Input
                   type="text"
                   id={`projectTechnologies-${project.id}`}
                   value={project.technologies || ""}
@@ -489,42 +421,37 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdat
                     updatedProjects[index].technologies = e.target.value
                     setProjects(updatedProjects)
                   }}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 />
               </div>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => removeItem(setProjects, projects, project.id, "project")}
+                className="mt-2"
+              >
+                <Trash2 size={16} className="mr-1" />
+                Remove
+              </Button>
             </div>
-            <button
-              onClick={() => removeItem(setProjects, projects, project.id, "project")}
-              className="mt-2 flex items-center text-red-600 hover:text-red-800"
-            >
-              <Trash2 size={16} className="mr-1" />
-              Remove
-            </button>
-          </div>
-        ))}
-        <button
-          onClick={() => addItem(setProjects, projects, "project")}
-          className="flex items-center text-blue-600 hover:text-blue-800"
-        >
-          <Plus size={16} className="mr-1" />
-          Add Project
-        </button>
-      </section>
+          ))}
+          <Button variant="outline" size="sm" onClick={() => addItem(setProjects, projects, "project")}>
+            <Plus size={16} className="mr-1" />
+            Add Project
+          </Button>
+        </CardContent>
+      </Card>
 
       {/* Education */}
-      <section>
-        <h3 className="text-lg font-semibold mb-2">Education</h3>
-        {education.map((edu, index) => (
-          <div key={edu.id} className="mb-4 p-4 border border-gray-200 rounded-md dark:border-gray-700">
-            <div className="space-y-4">
-              <div>
-                <label
-                  htmlFor={`school-${edu.id}`}
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  School
-                </label>
-                <input
+      <Card>
+        <CardHeader>
+          <CardTitle>Education</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {education.map((edu, index) => (
+            <div key={edu.id} className="p-4 border rounded-md space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor={`school-${edu.id}`}>School</Label>
+                <Input
                   type="text"
                   id={`school-${edu.id}`}
                   value={edu.school || ""}
@@ -533,17 +460,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdat
                     updatedEducation[index].school = e.target.value
                     setEducation(updatedEducation)
                   }}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 />
               </div>
-              <div>
-                <label
-                  htmlFor={`degree-${edu.id}`}
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Degree
-                </label>
-                <input
+              <div className="space-y-2">
+                <Label htmlFor={`degree-${edu.id}`}>Degree</Label>
+                <Input
                   type="text"
                   id={`degree-${edu.id}`}
                   value={edu.degree || ""}
@@ -552,17 +473,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdat
                     updatedEducation[index].degree = e.target.value
                     setEducation(updatedEducation)
                   }}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 />
               </div>
-              <div>
-                <label
-                  htmlFor={`fieldOfStudy-${edu.id}`}
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Field of Study
-                </label>
-                <input
+              <div className="space-y-2">
+                <Label htmlFor={`fieldOfStudy-${edu.id}`}>Field of Study</Label>
+                <Input
                   type="text"
                   id={`fieldOfStudy-${edu.id}`}
                   value={edu.field_of_study || ""}
@@ -571,17 +486,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdat
                     updatedEducation[index].field_of_study = e.target.value
                     setEducation(updatedEducation)
                   }}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 />
               </div>
-              <div>
-                <label
-                  htmlFor={`graduationDate-${edu.id}`}
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Graduation Date
-                </label>
-                <input
+              <div className="space-y-2">
+                <Label htmlFor={`graduationDate-${edu.id}`}>Graduation Date</Label>
+                <Input
                   type="date"
                   id={`graduationDate-${edu.id}`}
                   value={edu.graduation_date || ""}
@@ -590,46 +499,40 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdat
                     updatedEducation[index].graduation_date = e.target.value
                     setEducation(updatedEducation)
                   }}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 />
               </div>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => removeItem(setEducation, education, edu.id, "education")}
+                className="mt-2"
+              >
+                <Trash2 size={16} className="mr-1" />
+                Remove
+              </Button>
             </div>
-            <button
-              onClick={() => removeItem(setEducation, education, edu.id, "education")}
-              className="mt-2 flex items-center text-red-600 hover:text-red-800"
-            >
-              <Trash2 size={16} className="mr-1" />
-              Remove
-            </button>
-          </div>
-        ))}
-        <button
-          onClick={() => addItem(setEducation, education, "education")}
-          className="flex items-center text-blue-600 hover:text-blue-800"
-        >
-          <Plus size={16} className="mr-1" />
-          Add Education
-        </button>
-      </section>
+          ))}
+          <Button variant="outline" size="sm" onClick={() => addItem(setEducation, education, "education")}>
+            <Plus size={16} className="mr-1" />
+            Add Education
+          </Button>
+        </CardContent>
+      </Card>
 
       {/* Save Button */}
-      <button
-        onClick={handleSaveProfile}
-        disabled={isSaving}
-        className="w-full flex items-center justify-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors duration-200 disabled:bg-blue-400"
-      >
+      <Button onClick={handleSaveProfile} disabled={isSaving} className="w-full">
         {isSaving ? (
           <>
-            <Loader2 className="animate-spin h-4 w-4 mr-2" />
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             Saving...
           </>
         ) : (
           <>
-            <Save size={16} className="mr-2" />
+            <Save className="mr-2 h-4 w-4" />
             Save Profile
           </>
         )}
-      </button>
+      </Button>
     </div>
   )
 }

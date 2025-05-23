@@ -5,6 +5,12 @@ import { useState } from "react"
 import { Github, Linkedin, ArrowRight, Loader2 } from "lucide-react"
 import { GoogleIcon } from "../../components/icons/GoogleIcon"
 import { authService } from "../../services/authService"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Separator } from "@/components/ui/separator"
 
 interface LandingPageProps {
   onAuthStateChange: () => void
@@ -71,166 +77,133 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthStateChange }) => {
     <div className="flex flex-col items-center justify-center min-h-[500px] p-6 bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">MiddleAI</h1>
-          <p className="text-gray-600 dark:text-gray-300">Your AI-powered job application assistant</p>
+          <h1 className="text-3xl font-bold text-primary mb-2">MiddleAI</h1>
+          <p className="text-muted-foreground">Your AI-powered job application assistant</p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-          <div className="flex mb-6">
-            <button
-              onClick={() => setAuthMode("signin")}
-              className={`flex-1 px-4 py-2 text-sm font-medium ${
-                authMode === "signin"
-                  ? "text-blue-600 border-b-2 border-blue-600"
-                  : "text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-              }`}
-            >
-              Sign In
-            </button>
-            <button
-              onClick={() => setAuthMode("signup")}
-              className={`flex-1 px-4 py-2 text-sm font-medium ${
-                authMode === "signup"
-                  ? "text-blue-600 border-b-2 border-blue-600"
-                  : "text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-              }`}
-            >
-              Create Account
-            </button>
-          </div>
-
-          {error && (
-            <div className="mb-4 p-2 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded">{error}</div>
-          )}
-          {message && (
-            <div className="mb-4 p-2 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-200 rounded">
-              {message}
-            </div>
-          )}
-
-          <form onSubmit={handleEmailAuth} className="space-y-4">
-            {authMode === "signup" && (
-              <div>
-                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Full Name
-                </label>
-                <input
-                  id="fullName"
-                  type="text"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                  required={authMode === "signup"}
-                />
+        <Card>
+          <CardHeader className="pb-2">
+            <Tabs defaultValue={authMode} onValueChange={(value) => setAuthMode(value as AuthMode)}>
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="signin">Sign In</TabsTrigger>
+                <TabsTrigger value="signup">Create Account</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </CardHeader>
+          <CardContent>
+            {error && <div className="mb-4 p-2 bg-destructive/10 text-destructive rounded">{error}</div>}
+            {message && (
+              <div className="mb-4 p-2 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-200 rounded">
+                {message}
               </div>
             )}
 
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                required
-              />
-            </div>
+            <form onSubmit={handleEmailAuth} className="space-y-4">
+              {authMode === "signup" && (
+                <div className="space-y-2">
+                  <Label htmlFor="fullName">Full Name</Label>
+                  <Input
+                    id="fullName"
+                    type="text"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    required={authMode === "signup"}
+                  />
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+              </div>
+
+              {authMode !== "reset-password" && (
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <Label htmlFor="password">Password</Label>
+                    {authMode === "signin" && (
+                      <Button
+                        type="button"
+                        variant="link"
+                        className="p-0 h-auto text-xs"
+                        onClick={() => setAuthMode("reset-password")}
+                      >
+                        Forgot password?
+                      </Button>
+                    )}
+                  </div>
+                  <Input
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required={authMode !== "reset-password"}
+                  />
+                </div>
+              )}
+
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Please wait
+                  </>
+                ) : (
+                  <>
+                    {authMode === "signin" ? "Sign In" : authMode === "signup" ? "Create Account" : "Reset Password"}
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </>
+                )}
+              </Button>
+            </form>
 
             {authMode !== "reset-password" && (
-              <div>
-                <div className="flex justify-between">
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Password
-                  </label>
-                  {authMode === "signin" && (
-                    <button
-                      type="button"
-                      onClick={() => setAuthMode("reset-password")}
-                      className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
-                    >
-                      Forgot password?
-                    </button>
-                  )}
+              <>
+                <div className="relative my-6">
+                  <div className="absolute inset-0 flex items-center">
+                    <Separator />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                  </div>
                 </div>
-                <input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                  required={authMode !== "reset-password"}
-                />
-              </div>
+
+                <div className="grid grid-cols-3 gap-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => handleOAuthSignIn("github")}
+                    disabled={loading}
+                    className="w-full"
+                  >
+                    <Github className="h-5 w-5" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => handleOAuthSignIn("google")}
+                    disabled={loading}
+                    className="w-full"
+                  >
+                    <GoogleIcon className="h-5 w-5" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => handleOAuthSignIn("linkedin")}
+                    disabled={loading}
+                    className="w-full"
+                  >
+                    <Linkedin className="h-5 w-5" />
+                  </Button>
+                </div>
+              </>
             )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-            >
-              {loading ? (
-                <Loader2 className="animate-spin h-5 w-5 mr-2" />
-              ) : (
-                <>
-                  {authMode === "signin" ? "Sign In" : authMode === "signup" ? "Create Account" : "Reset Password"}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </>
-              )}
-            </button>
-          </form>
-
-          {authMode !== "reset-password" && (
-            <>
-              <div className="mt-6 relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
-                    Or continue with
-                  </span>
-                </div>
-              </div>
-
-              <div className="mt-6 grid grid-cols-3 gap-3">
-                <button
-                  onClick={() => handleOAuthSignIn("github")}
-                  disabled={loading}
-                  className="w-full flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50"
-                >
-                  <Github className="h-5 w-5" />
-                </button>
-                <button
-                  onClick={() => handleOAuthSignIn("google")}
-                  disabled={loading}
-                  className="w-full flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50"
-                >
-                  <GoogleIcon className="h-5 w-5" />
-                </button>
-                <button
-                  onClick={() => handleOAuthSignIn("linkedin")}
-                  disabled={loading}
-                  className="w-full flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50"
-                >
-                  <Linkedin className="h-5 w-5" />
-                </button>
-              </div>
-            </>
-          )}
-
-          {authMode === "reset-password" && (
-            <button
-              type="button"
-              onClick={() => setAuthMode("signin")}
-              className="mt-4 w-full text-center text-sm text-blue-600 dark:text-blue-400 hover:underline"
-            >
-              Back to sign in
-            </button>
-          )}
-        </div>
+            {authMode === "reset-password" && (
+              <Button type="button" variant="link" className="mt-4 w-full" onClick={() => setAuthMode("signin")}>
+                Back to sign in
+              </Button>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   )

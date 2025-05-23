@@ -11,6 +11,7 @@ import LandingPage from "./pages/LandingPage"
 import { authService } from "../services/authService"
 import { profileService, type ProfileWithDetails } from "../services/profileService"
 import { supabase } from "../lib/supabase"
+import { Button } from "@/components/ui/button"
 
 type Page = "autofill" | "profile"
 
@@ -129,15 +130,15 @@ const Popup: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-[600px] w-[400px] bg-white dark:bg-gray-800">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="flex items-center justify-center h-[600px] w-[400px] bg-background">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
       </div>
     )
   }
 
   if (!user) {
     return (
-      <div className="h-[600px] w-[400px] bg-white dark:bg-gray-800">
+      <div className="h-[600px] w-[400px] bg-background">
         <LandingPage onAuthStateChange={handleAuthStateChange} />
       </div>
     )
@@ -146,7 +147,7 @@ const Popup: React.FC = () => {
   return (
     <div className="flex flex-col h-[600px] w-[400px] relative overflow-hidden">
       {/* Header */}
-      <header className="flex justify-between items-center p-4 bg-blue-600 dark:bg-blue-800 text-white transition-colors duration-300 z-10">
+      <header className="flex justify-between items-center p-4 bg-primary text-primary-foreground z-10">
         <div className="flex items-center">
           <h1 className="text-2xl font-bold">MiddleAI</h1>
           {profile && (
@@ -162,64 +163,64 @@ const Popup: React.FC = () => {
           )}
         </div>
         <div className="flex items-center space-x-2">
-          <button
-            className="p-2 rounded-full hover:bg-blue-700 dark:hover:bg-blue-900 transition-colors duration-300"
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={toggleDarkMode}
             aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+            className="text-primary-foreground hover:bg-primary/90"
           >
-            {isDarkMode ? (
-              <Sun size={24} className="transition-transform duration-300 rotate-0" />
-            ) : (
-              <Moon size={24} className="transition-transform duration-300 rotate-180" />
-            )}
-          </button>
-          <button
-            className="p-2 rounded-full hover:bg-blue-700 dark:hover:bg-blue-900 transition-colors duration-300"
+            {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={handleLogout}
             aria-label="Log out"
+            className="text-primary-foreground hover:bg-primary/90"
           >
-            <LogOut size={20} />
-          </button>
+            <LogOut className="h-5 w-5" />
+          </Button>
           <animated.button
             style={iconAnimation}
-            className="p-2 rounded-full hover:bg-blue-700 dark:hover:bg-blue-900 transition-colors duration-300"
+            className="p-2 rounded-full hover:bg-primary/90 transition-colors duration-300 text-primary-foreground"
             onClick={toggleSettings}
             aria-label="Settings"
           >
-            <SettingsIcon size={24} />
+            <SettingsIcon className="h-5 w-5" />
           </animated.button>
         </div>
       </header>
 
       {/* Main content */}
-      <main className="flex-grow p-4 overflow-y-auto bg-white dark:bg-gray-800 text-black dark:text-white transition-colors duration-300">
-        {renderPage()}
-      </main>
+      <main className="flex-grow p-4 overflow-y-auto bg-background text-foreground">{renderPage()}</main>
 
       {/* Footer */}
-      <footer className="flex justify-around items-center p-4 bg-gray-100 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600 transition-colors duration-300 z-10">
-        <button
-          className={`flex flex-col items-center ${currentPage === "autofill" ? "text-blue-600" : "text-gray-600 dark:text-gray-300"} hover:text-blue-600 transition-colors`}
+      <footer className="flex justify-around items-center p-4 bg-muted border-t border-border z-10">
+        <Button
+          variant={currentPage === "autofill" ? "default" : "ghost"}
+          className="flex flex-col items-center h-auto py-2"
           onClick={() => setCurrentPage("autofill")}
           aria-label="Autofill"
         >
-          <FileText size={24} />
-          <span className="text-xs mt-1">Autofill</span>
-        </button>
-        <button
-          className={`flex flex-col items-center ${currentPage === "profile" ? "text-blue-600" : "text-gray-600 dark:text-gray-300"} hover:text-blue-600 transition-colors`}
+          <FileText className="h-5 w-5 mb-1" />
+          <span className="text-xs">Autofill</span>
+        </Button>
+        <Button
+          variant={currentPage === "profile" ? "default" : "ghost"}
+          className="flex flex-col items-center h-auto py-2"
           onClick={() => setCurrentPage("profile")}
           aria-label="Profile"
         >
-          <User size={24} />
-          <span className="text-xs mt-1">Profile</span>
-        </button>
+          <User className="h-5 w-5 mb-1" />
+          <span className="text-xs">Profile</span>
+        </Button>
       </footer>
 
       {/* Settings Panel */}
       <animated.div
         style={settingsAnimation}
-        className="absolute top-[64px] bottom-0 left-0 right-0 bg-white dark:bg-gray-800 shadow-lg z-20"
+        className="absolute top-[64px] bottom-0 left-0 right-0 bg-background shadow-lg z-20"
       >
         <SettingsPage onClose={toggleSettings} />
       </animated.div>

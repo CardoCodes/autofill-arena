@@ -3,6 +3,7 @@
 import type React from "react"
 import { useState, useEffect } from "react"
 import { Zap } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 type AutofillStatus = "ready" | "not-available" | "in-progress" | "neutral"
 
@@ -58,11 +59,11 @@ const AutofillPage: React.FC = () => {
       case "ready":
         return "bg-green-500"
       case "not-available":
-        return "bg-red-500"
+        return "bg-destructive"
       case "in-progress":
         return "bg-yellow-500"
       default:
-        return "bg-white dark:bg-gray-600"
+        return "bg-muted"
     }
   }
 
@@ -91,51 +92,54 @@ const AutofillPage: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-full">
-      <div className="text-center mb-8">
-        <h2 className="text-xl font-semibold mb-2">Autofill Assistant</h2>
-        <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">{currentUrl}</p>
-        <p className="text-sm">{statusMessage}</p>
-      </div>
+      <Card className="w-full max-w-md mx-auto bg-transparent border-0 shadow-none">
+        <CardHeader className="text-center">
+          <CardTitle>Autofill Assistant</CardTitle>
+          <CardDescription>{currentUrl}</CardDescription>
+          <p className="text-sm text-muted-foreground">{statusMessage}</p>
+        </CardHeader>
+        <CardContent className="flex justify-center">
+          <div className={`relative group ${status === "not-available" ? "cursor-not-allowed" : "cursor-pointer"}`}>
+            {/* Aura/glow effect */}
+            <div
+              className={`absolute inset-0 rounded-full blur-xl opacity-70 group-hover:opacity-100 transition-all duration-300 ${getStatusColor()}`}
+            ></div>
 
-      <div className={`relative group ${status === "not-available" ? "cursor-not-allowed" : "cursor-pointer"}`}>
-        {/* Aura/glow effect */}
-        <div
-          className={`absolute inset-0 rounded-full blur-xl opacity-70 group-hover:opacity-100 transition-all duration-300 ${getStatusColor()}`}
-        ></div>
+            {/* Inner glow */}
+            <div
+              className={`absolute inset-0 rounded-full blur-md opacity-70 group-hover:opacity-100 transition-all duration-300 ${getStatusColor()}`}
+            ></div>
 
-        {/* Inner glow */}
-        <div
-          className={`absolute inset-0 rounded-full blur-md opacity-70 group-hover:opacity-100 transition-all duration-300 ${getStatusColor()}`}
-        ></div>
-
-        {/* Button */}
-        <button
-          onClick={handleAutofill}
-          disabled={status === "not-available" || status === "neutral"}
-          className={`relative z-10 flex items-center justify-center w-40 h-40 rounded-full bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-300 ${
-            status !== "not-available" && status !== "neutral" ? "hover:scale-105 active:scale-95" : "opacity-80"
-          }`}
-        >
-          <div className="flex flex-col items-center">
-            <Zap
-              size={48}
-              className={`mb-2 ${
-                status === "ready"
-                  ? "text-green-500"
-                  : status === "not-available"
-                    ? "text-red-500"
-                    : status === "in-progress"
-                      ? "text-yellow-500"
-                      : "text-gray-400"
+            {/* Button */}
+            <button
+              onClick={handleAutofill}
+              disabled={status === "not-available" || status === "neutral"}
+              className={`relative z-10 flex items-center justify-center w-40 h-40 rounded-full bg-card shadow-lg transform transition-transform duration-300 ${
+                status !== "not-available" && status !== "neutral" ? "hover:scale-105 active:scale-95" : "opacity-80"
               }`}
-            />
-            <span className="font-semibold">{getButtonText()}</span>
+            >
+              <div className="flex flex-col items-center">
+                <Zap
+                  size={48}
+                  className={`mb-2 ${
+                    status === "ready"
+                      ? "text-green-500"
+                      : status === "not-available"
+                        ? "text-destructive"
+                        : status === "in-progress"
+                          ? "text-yellow-500"
+                          : "text-muted-foreground"
+                  }`}
+                />
+                <span className="font-semibold">{getButtonText()}</span>
+              </div>
+            </button>
           </div>
-        </button>
-      </div>
+        </CardContent>
+      </Card>
 
       <div className="mt-8 text-center">
-        <p className="text-sm text-gray-500 dark:text-gray-400">
+        <p className="text-sm text-muted-foreground">
           Your profile information will be used to fill out job applications automatically.
         </p>
       </div>
