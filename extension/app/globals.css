@@ -46,71 +46,100 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  
+  /* Dracula Theme Colors */
+  --background: 231 15% 18%; /* #282a36 - Dracula background */
+  --foreground: 60 30% 96%; /* #f8f8f2 - Dracula foreground */
+  
+  --card: 232 14% 31%; /* #44475a - Dracula current line */
+  --card-foreground: 60 30% 96%; /* #f8f8f2 */
+  
+  --popover: 232 14% 31%; /* #44475a */
+  --popover-foreground: 60 30% 96%; /* #f8f8f2 */
+  
+  --primary: 326 100% 74%; /* #ff79c6 - Dracula pink */
+  --primary-foreground: 60 30% 96%;
+  
+  --secondary: 265 89% 78%; /* #bd93f9 - Dracula purple */
+  --secondary-foreground: 60 30% 96%;
+  
+  --muted: 232 14% 31%; /* #44475a */
+  --muted-foreground: 225 27% 70%; /* #6272a4 - Dracula comment */
+  
+  --accent: 135 94% 65%; /* #50fa7b - Dracula green */
+  --accent-foreground: 60 30% 96%;
+  
+  --destructive: 0 63% 31%; /* #ff5555 - Dracula red */
+  --destructive-foreground: 60 30% 96%;
+  
+  --border: 232 14% 31%; /* #44475a */
+  --input: 232 14% 31%; /* #44475a */
+  --ring: 326 100% 74%; /* #ff79c6 */
+  
+  /* Chart colors using Dracula palette */
+  --chart-1: 326 100% 74%; /* #ff79c6 - Pink */
+  --chart-2: 265 89% 78%; /* #bd93f9 - Purple */
+  --chart-3: 135 94% 65%; /* #50fa7b - Green */
+  --chart-4: 31 100% 71%; /* #ffb86c - Orange */
+  --chart-5: 191 97% 77%; /* #8be9fd - Cyan */
+  
+  /* Sidebar using Dracula colors */
+  --sidebar: 231 15% 18%; /* #282a36 */
+  --sidebar-foreground: 60 30% 96%; /* #f8f8f2 */
+  --sidebar-primary: 326 100% 74%; /* #ff79c6 */
+  --sidebar-primary-foreground: 60 30% 96%; /* #f8f8f2 */
+  --sidebar-accent: 265 89% 78%; /* #bd93f9 */
+  --sidebar-accent-foreground: 60 30% 96%; /* #f8f8f2 */
+  --sidebar-border: 232 14% 31%; /* #44475a */
+  --sidebar-ring: 326 100% 74%; /* #ff79c6 */
 }
 
+/* Dark mode is the default for Dracula theme */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: 231 15% 18%; /* #282a36 */
+  --foreground: 60 30% 96%; /* #f8f8f2 */
+  
+  --card: 232 14% 31%; /* #44475a */
+  --card-foreground: 60 30% 96%; /* #f8f8f2 */
+  
+  --popover: 232 14% 31%; /* #44475a */
+  --popover-foreground: 60 30% 96%; /* #f8f8f2 */
+  
+  --primary: 326 100% 74%; /* #ff79c6 */
+  --primary-foreground: 231 15% 18%; /* #282a36 */
+  
+  --secondary: 265 89% 78%; /* #bd93f9 */
+  --secondary-foreground: 60 30% 96%; /* #f8f8f2 */
+  
+  --muted: 232 14% 31%; /* #44475a */
+  --muted-foreground: 225 27% 70%; /* #6272a4 */
+  
+  --accent: 135 94% 65%; /* #50fa7b */
+  --accent-foreground: 231 15% 18%; /* #282a36 */
+  
+  --destructive: 0 63% 31%; /* #ff5555 */
+  --destructive-foreground: 60 30% 96%; /* #f8f8f2 */
+  
+  --border: 232 14% 31%; /* #44475a */
+  --input: 232 14% 31%; /* #44475a */
+  --ring: 326 100% 74%; /* #ff79c6 */
+  
+  /* Chart colors */
+  --chart-1: 326 100% 74%; /* #ff79c6 */
+  --chart-2: 265 89% 78%; /* #bd93f9 */
+  --chart-3: 135 94% 65%; /* #50fa7b */
+  --chart-4: 31 100% 71%; /* #ffb86c */
+  --chart-5: 191 97% 77%; /* #8be9fd */
+  
+  /* Sidebar */
+  --sidebar: 231 15% 18%; /* #282a36 */
+  --sidebar-foreground: 60 30% 96%; /* #f8f8f2 */
+  --sidebar-primary: 326 100% 74%; /* #ff79c6 */
+  --sidebar-primary-foreground: 231 15% 18%; /* #282a36 */
+  --sidebar-accent: 265 89% 78%; /* #bd93f9 */
+  --sidebar-accent-foreground: 60 30% 96%; /* #f8f8f2 */
+  --sidebar-border: 232 14% 31%; /* #44475a */
+  --sidebar-ring: 326 100% 74%; /* #ff79c6 */
 }
 
 @layer base {
@@ -119,5 +148,20 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Additional Dracula-specific utility classes */
+@layer utilities {
+  .dracula-gradient {
+    @apply bg-gradient-to-br from-[#ff79c6] via-[#bd93f9] to-[#8be9fd];
+  }
+  
+  .dracula-glow {
+    @apply shadow-[0_0_20px_rgba(189,147,249,0.3)];
+  }
+  
+  .dracula-border {
+    @apply border-[#44475a] border-opacity-50;
   }
 }

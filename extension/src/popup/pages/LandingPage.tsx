@@ -74,26 +74,44 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthStateChange }) => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[500px] p-6 bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-primary mb-2">MiddleAI</h1>
-          <p className="text-muted-foreground">Your AI-powered job application assistant</p>
+    <div className="flex flex-col items-center justify-center min-h-[500px] p-6 bg-background">
+      <div className="w-full max-w-md space-y-8">
+        <div className="text-center space-y-2">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-[#ff79c6] to-[#bd93f9] text-transparent bg-clip-text">
+            MiddleAI
+          </h1>
+          <p className="text-[#6272a4] dark:text-[#6272a4]">
+            Your AI-powered job application assistant
+          </p>
         </div>
 
-        <Card>
+        <Card className="border-[#44475a] bg-[#282a36] shadow-lg dracula-glow">
           <CardHeader className="pb-2">
             <Tabs defaultValue={authMode} onValueChange={(value) => setAuthMode(value as AuthMode)}>
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="signin">Sign In</TabsTrigger>
-                <TabsTrigger value="signup">Create Account</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 bg-[#44475a]">
+                <TabsTrigger 
+                  value="signin"
+                  className="data-[state=active]:bg-[#bd93f9] data-[state=active]:text-[#282a36]"
+                >
+                  Sign In
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="signup"
+                  className="data-[state=active]:bg-[#bd93f9] data-[state=active]:text-[#282a36]"
+                >
+                  Create Account
+                </TabsTrigger>
               </TabsList>
             </Tabs>
           </CardHeader>
           <CardContent>
-            {error && <div className="mb-4 p-2 bg-destructive/10 text-destructive rounded">{error}</div>}
+            {error && (
+              <div className="mb-4 p-2 bg-[#ff5555]/20 text-[#ff5555] rounded">
+                {error}
+              </div>
+            )}
             {message && (
-              <div className="mb-4 p-2 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-200 rounded">
+              <div className="mb-4 p-2 bg-[#50fa7b]/20 text-[#50fa7b] rounded">
                 {message}
               </div>
             )}
@@ -101,31 +119,39 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthStateChange }) => {
             <form onSubmit={handleEmailAuth} className="space-y-4">
               {authMode === "signup" && (
                 <div className="space-y-2">
-                  <Label htmlFor="fullName">Full Name</Label>
+                  <Label htmlFor="fullName" className="text-[#f8f8f2]">Full Name</Label>
                   <Input
                     id="fullName"
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     required={authMode === "signup"}
+                    className="bg-[#44475a] border-[#6272a4] focus:border-[#bd93f9] text-[#f8f8f2]"
                   />
                 </div>
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                <Label htmlFor="email" className="text-[#f8f8f2]">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="bg-[#44475a] border-[#6272a4] focus:border-[#bd93f9] text-[#f8f8f2]"
+                />
               </div>
 
               {authMode !== "reset-password" && (
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password" className="text-[#f8f8f2]">Password</Label>
                     {authMode === "signin" && (
                       <Button
                         type="button"
                         variant="link"
-                        className="p-0 h-auto text-xs"
+                        className="p-0 h-auto text-xs text-[#8be9fd] hover:text-[#ff79c6]"
                         onClick={() => setAuthMode("reset-password")}
                       >
                         Forgot password?
@@ -138,11 +164,16 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthStateChange }) => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required={authMode !== "reset-password"}
+                    className="bg-[#44475a] border-[#6272a4] focus:border-[#bd93f9] text-[#f8f8f2]"
                   />
                 </div>
               )}
 
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button 
+                type="submit" 
+                className="w-full bg-[#ff79c6] hover:bg-[#ff79c6]/90 text-[#282a36]" 
+                disabled={loading}
+              >
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -161,10 +192,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthStateChange }) => {
               <>
                 <div className="relative my-6">
                   <div className="absolute inset-0 flex items-center">
-                    <Separator />
+                    <Separator className="bg-[#44475a]" />
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                    <span className="bg-[#282a36] px-2 text-[#6272a4]">Or continue with</span>
                   </div>
                 </div>
 
@@ -173,7 +204,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthStateChange }) => {
                     variant="outline"
                     onClick={() => handleOAuthSignIn("github")}
                     disabled={loading}
-                    className="w-full"
+                    className="w-full border-[#6272a4] hover:bg-[#44475a] text-[#f8f8f2]"
                   >
                     <Github className="h-5 w-5" />
                   </Button>
@@ -181,7 +212,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthStateChange }) => {
                     variant="outline"
                     onClick={() => handleOAuthSignIn("google")}
                     disabled={loading}
-                    className="w-full"
+                    className="w-full border-[#6272a4] hover:bg-[#44475a] text-[#f8f8f2]"
                   >
                     <GoogleIcon className="h-5 w-5" />
                   </Button>
@@ -189,7 +220,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthStateChange }) => {
                     variant="outline"
                     onClick={() => handleOAuthSignIn("linkedin")}
                     disabled={loading}
-                    className="w-full"
+                    className="w-full border-[#6272a4] hover:bg-[#44475a] text-[#f8f8f2]"
                   >
                     <Linkedin className="h-5 w-5" />
                   </Button>
@@ -198,7 +229,12 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthStateChange }) => {
             )}
 
             {authMode === "reset-password" && (
-              <Button type="button" variant="link" className="mt-4 w-full" onClick={() => setAuthMode("signin")}>
+              <Button 
+                type="button" 
+                variant="link" 
+                className="mt-4 w-full text-[#8be9fd] hover:text-[#ff79c6]" 
+                onClick={() => setAuthMode("signin")}
+              >
                 Back to sign in
               </Button>
             )}
