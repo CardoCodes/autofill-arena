@@ -230,162 +230,187 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdat
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Profile</h2>
+        <h2 className="text-2xl font-bold text-[#f8f8f2]">Profile</h2>
         {saveMessage && (
-          <div className={`text-sm ${saveMessage.includes("Error") ? "text-destructive" : "text-green-500"}`}>
+          <div className={`text-sm ${saveMessage.includes("Error") ? "text-[#ff5555]" : "text-[#50fa7b]"}`}>
             {saveMessage}
           </div>
         )}
       </div>
 
       {/* Personal Information */}
-      <Card>
+      <Card className="bg-[#44475a] border-0 shadow-none">
         <CardHeader>
-          <CardTitle>Personal Information</CardTitle>
+          <CardTitle className="text-[#f8f8f2]">Personal Information</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="fullName">Full Name</Label>
-            <Input type="text" id="fullName" value={fullName} onChange={(e) => setFullName(e.target.value)} />
+            <Label htmlFor="fullName" className="text-[#f8f8f2]">Full Name</Label>
+            <Input
+              type="text"
+              id="fullName"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              className="bg-[#282a36] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
+            />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input type="email" id="email" value={user?.email || ""} disabled className="bg-muted" />
-            <p className="text-xs text-muted-foreground">Email cannot be changed</p>
+            <Label htmlFor="email" className="text-[#f8f8f2]">Email</Label>
+            <Input
+              type="email"
+              id="email"
+              value={user?.email || ""}
+              disabled
+              className="bg-[#282a36] border-[#6272a4] text-[#6272a4]"
+            />
+            <p className="text-xs text-[#6272a4]">Email cannot be changed</p>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="phone">Phone</Label>
-            <Input type="tel" id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
+            <Label htmlFor="phone" className="text-[#f8f8f2]">Phone</Label>
+            <Input
+              type="tel"
+              id="phone"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="bg-[#282a36] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
+            />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="location">Location</Label>
-            <Input type="text" id="location" value={location} onChange={(e) => setLocation(e.target.value)} />
+            <Label htmlFor="location" className="text-[#f8f8f2]">Location</Label>
+            <Input
+              type="text"
+              id="location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              className="bg-[#282a36] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
+            />
           </div>
         </CardContent>
       </Card>
 
       {/* Job History */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Job History</CardTitle>
+      <Card className="bg-[#44475a] border-0 shadow-none">
+        <CardHeader className="flex flex-row justify-between items-center">
+          <CardTitle className="text-[#f8f8f2]">Job History</CardTitle>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => addItem(setJobHistory, jobHistory, "job")}
+            className="bg-[#282a36] border-[#6272a4] text-[#f8f8f2] hover:bg-[#44475a] hover:text-[#50fa7b] transition-all duration-300"
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
         </CardHeader>
         <CardContent className="space-y-4">
           {jobHistory.map((job, index) => (
-            <div key={job.id} className="p-4 border rounded-md space-y-4">
+            <div key={job.id} className="space-y-4 p-4 bg-[#282a36] rounded-lg relative group">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => removeItem(setJobHistory, jobHistory, job.id, "job")}
+                className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 text-[#ff5555] hover:text-[#ff5555] hover:bg-[#44475a] transition-all duration-300"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
               <div className="space-y-2">
-                <Label htmlFor={`company-${job.id}`}>Company</Label>
+                <Label className="text-[#f8f8f2]">Company</Label>
                 <Input
-                  type="text"
-                  id={`company-${job.id}`}
-                  value={job.company || ""}
+                  value={job.company}
                   onChange={(e) => {
                     const updatedJobs = [...jobHistory]
                     updatedJobs[index].company = e.target.value
                     setJobHistory(updatedJobs)
                   }}
+                  className="bg-[#44475a] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor={`position-${job.id}`}>Position</Label>
+                <Label className="text-[#f8f8f2]">Position</Label>
                 <Input
-                  type="text"
-                  id={`position-${job.id}`}
-                  value={job.position || ""}
+                  value={job.position}
                   onChange={(e) => {
                     const updatedJobs = [...jobHistory]
                     updatedJobs[index].position = e.target.value
                     setJobHistory(updatedJobs)
                   }}
+                  className="bg-[#44475a] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor={`startDate-${job.id}`}>Start Date</Label>
+                  <Label className="text-[#f8f8f2]">Start Date</Label>
                   <Input
                     type="date"
-                    id={`startDate-${job.id}`}
-                    value={job.start_date || ""}
+                    value={job.start_date}
                     onChange={(e) => {
                       const updatedJobs = [...jobHistory]
                       updatedJobs[index].start_date = e.target.value
                       setJobHistory(updatedJobs)
                     }}
+                    className="bg-[#44475a] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor={`endDate-${job.id}`}>End Date</Label>
+                  <Label className="text-[#f8f8f2]">End Date</Label>
                   <Input
                     type="date"
-                    id={`endDate-${job.id}`}
-                    value={job.end_date || ""}
+                    value={job.end_date}
                     onChange={(e) => {
                       const updatedJobs = [...jobHistory]
                       updatedJobs[index].end_date = e.target.value
                       setJobHistory(updatedJobs)
                     }}
+                    className="bg-[#44475a] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor={`jobDescription-${job.id}`}>Description</Label>
+                <Label className="text-[#f8f8f2]">Description</Label>
                 <Textarea
-                  id={`jobDescription-${job.id}`}
-                  value={job.description || ""}
+                  value={job.description}
                   onChange={(e) => {
                     const updatedJobs = [...jobHistory]
                     updatedJobs[index].description = e.target.value
                     setJobHistory(updatedJobs)
                   }}
-                  rows={3}
+                  className="bg-[#44475a] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300 min-h-[100px]"
                 />
               </div>
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={() => removeItem(setJobHistory, jobHistory, job.id, "job")}
-                className="mt-2"
-              >
-                <Trash2 size={16} className="mr-1" />
-                Remove
-              </Button>
             </div>
           ))}
-          <Button variant="outline" size="sm" onClick={() => addItem(setJobHistory, jobHistory, "job")}>
-            <Plus size={16} className="mr-1" />
-            Add Job
-          </Button>
         </CardContent>
       </Card>
 
       {/* Skills */}
-      <Card>
+      <Card className="bg-[#44475a] border-0 shadow-none">
         <CardHeader>
-          <CardTitle>Skills</CardTitle>
+          <CardTitle className="text-[#f8f8f2]">Skills</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
-            <Label htmlFor="skills">List your skills (comma-separated)</Label>
+            <Label htmlFor="skills" className="text-[#f8f8f2]">List your skills (comma-separated)</Label>
             <Input
               type="text"
               id="skills"
               value={skills}
               onChange={(e) => setSkills(e.target.value)}
               placeholder="e.g. JavaScript, React, Node.js"
+              className="bg-[#282a36] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
             />
           </div>
         </CardContent>
       </Card>
 
       {/* Projects */}
-      <Card>
+      <Card className="bg-[#44475a] border-0 shadow-none">
         <CardHeader>
-          <CardTitle>Projects</CardTitle>
+          <CardTitle className="text-[#f8f8f2]">Projects</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {projects.map((project, index) => (
-            <div key={project.id} className="p-4 border rounded-md space-y-4">
+            <div key={project.id} className="p-4 bg-[#282a36] rounded-lg border-0 space-y-4">
               <div className="space-y-2">
-                <Label htmlFor={`projectName-${project.id}`}>Project Name</Label>
+                <Label htmlFor={`projectName-${project.id}`} className="text-[#f8f8f2]">Project Name</Label>
                 <Input
                   type="text"
                   id={`projectName-${project.id}`}
@@ -395,10 +420,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdat
                     updatedProjects[index].name = e.target.value
                     setProjects(updatedProjects)
                   }}
+                  className="bg-[#282a36] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor={`projectDescription-${project.id}`}>Description</Label>
+                <Label htmlFor={`projectDescription-${project.id}`} className="text-[#f8f8f2]">Description</Label>
                 <Textarea
                   id={`projectDescription-${project.id}`}
                   value={project.description || ""}
@@ -408,10 +434,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdat
                     setProjects(updatedProjects)
                   }}
                   rows={3}
+                  className="bg-[#282a36] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor={`projectTechnologies-${project.id}`}>Technologies Used</Label>
+                <Label htmlFor={`projectTechnologies-${project.id}`} className="text-[#f8f8f2]">Technologies Used</Label>
                 <Input
                   type="text"
                   id={`projectTechnologies-${project.id}`}
@@ -421,20 +448,26 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdat
                     updatedProjects[index].technologies = e.target.value
                     setProjects(updatedProjects)
                   }}
+                  className="bg-[#282a36] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
                 />
               </div>
               <Button
                 variant="destructive"
                 size="sm"
                 onClick={() => removeItem(setProjects, projects, project.id, "project")}
-                className="mt-2"
+                className="mt-2 bg-[#ff5555] hover:bg-[#ff5555]/90 text-[#f8f8f2]"
               >
                 <Trash2 size={16} className="mr-1" />
                 Remove
               </Button>
             </div>
           ))}
-          <Button variant="outline" size="sm" onClick={() => addItem(setProjects, projects, "project")}>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => addItem(setProjects, projects, "project")}
+            className="bg-[#282a36] border-[#6272a4] text-[#f8f8f2] hover:bg-[#44475a] hover:text-[#50fa7b] transition-all duration-300"
+          >
             <Plus size={16} className="mr-1" />
             Add Project
           </Button>
@@ -442,15 +475,15 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdat
       </Card>
 
       {/* Education */}
-      <Card>
+      <Card className="bg-[#44475a] border-0 shadow-none">
         <CardHeader>
-          <CardTitle>Education</CardTitle>
+          <CardTitle className="text-[#f8f8f2]">Education</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {education.map((edu, index) => (
-            <div key={edu.id} className="p-4 border rounded-md space-y-4">
+            <div key={edu.id} className="p-4 bg-[#282a36] rounded-lg border-0 space-y-4">
               <div className="space-y-2">
-                <Label htmlFor={`school-${edu.id}`}>School</Label>
+                <Label htmlFor={`school-${edu.id}`} className="text-[#f8f8f2]">School</Label>
                 <Input
                   type="text"
                   id={`school-${edu.id}`}
@@ -460,10 +493,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdat
                     updatedEducation[index].school = e.target.value
                     setEducation(updatedEducation)
                   }}
+                  className="bg-[#282a36] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor={`degree-${edu.id}`}>Degree</Label>
+                <Label htmlFor={`degree-${edu.id}`} className="text-[#f8f8f2]">Degree</Label>
                 <Input
                   type="text"
                   id={`degree-${edu.id}`}
@@ -473,10 +507,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdat
                     updatedEducation[index].degree = e.target.value
                     setEducation(updatedEducation)
                   }}
+                  className="bg-[#282a36] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor={`fieldOfStudy-${edu.id}`}>Field of Study</Label>
+                <Label htmlFor={`fieldOfStudy-${edu.id}`} className="text-[#f8f8f2]">Field of Study</Label>
                 <Input
                   type="text"
                   id={`fieldOfStudy-${edu.id}`}
@@ -486,10 +521,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdat
                     updatedEducation[index].field_of_study = e.target.value
                     setEducation(updatedEducation)
                   }}
+                  className="bg-[#282a36] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor={`graduationDate-${edu.id}`}>Graduation Date</Label>
+                <Label htmlFor={`graduationDate-${edu.id}`} className="text-[#f8f8f2]">Graduation Date</Label>
                 <Input
                   type="date"
                   id={`graduationDate-${edu.id}`}
@@ -499,20 +535,26 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdat
                     updatedEducation[index].graduation_date = e.target.value
                     setEducation(updatedEducation)
                   }}
+                  className="bg-[#282a36] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
                 />
               </div>
               <Button
                 variant="destructive"
                 size="sm"
                 onClick={() => removeItem(setEducation, education, edu.id, "education")}
-                className="mt-2"
+                className="mt-2 bg-[#ff5555] hover:bg-[#ff5555]/90 text-[#f8f8f2]"
               >
                 <Trash2 size={16} className="mr-1" />
                 Remove
               </Button>
             </div>
           ))}
-          <Button variant="outline" size="sm" onClick={() => addItem(setEducation, education, "education")}>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => addItem(setEducation, education, "education")}
+            className="bg-[#282a36] border-[#6272a4] text-[#f8f8f2] hover:bg-[#44475a] hover:text-[#50fa7b] transition-all duration-300"
+          >
             <Plus size={16} className="mr-1" />
             Add Education
           </Button>
@@ -520,7 +562,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdat
       </Card>
 
       {/* Save Button */}
-      <Button onClick={handleSaveProfile} disabled={isSaving} className="w-full">
+      <Button
+        onClick={handleSaveProfile}
+        disabled={isSaving}
+        className="w-full bg-[#50fa7b] hover:bg-[#50fa7b]/90 text-[#282a36] transition-all duration-300"
+      >
         {isSaving ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />

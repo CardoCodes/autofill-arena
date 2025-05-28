@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "AutoFill Arena",
+  "version": "1.0.0",
+  "description": "AI-powered job application autofill assistant",
+  "permissions": [
+    "storage",
+    "identity",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://*.supabase.co/*"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+  "oauth2": {
+    "client_id": "${SUPABASE_CLIENT_ID}",
+    "scopes": [
+      "https://auth.supabase.io/oauth/v2/authorize"
+    ]
+  }
+} 

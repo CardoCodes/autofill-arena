@@ -1,3 +1,5 @@
+/// <reference types="chrome"/>
+
 import { supabase } from "../lib/supabase"
 import type { Provider } from "@supabase/supabase-js"
 
@@ -44,10 +46,17 @@ export const authService = {
   // Sign in with OAuth provider
   signInWithOAuth: async (provider: Provider) => {
     try {
+      let redirectTo = window.location.origin;
+      // Check if we're in a Chrome extension context
+      if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL) {
+        redirectTo = chrome.runtime.getURL('popup.html');
+      }
+      
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: window.location.origin,
+          redirectTo,
+          skipBrowserRedirect: false,
         },
       })
 

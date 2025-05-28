@@ -11,5 +11,4 @@ extension/.next
 .env.local
 .vscode/
 .cursor/
-
-
+node_modules/

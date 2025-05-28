@@ -1,128 +1,70 @@
-export interface UserProfile {
+/// <reference types="chrome"/>
+
+export interface User {
   id: string
-  name: string
   email: string
+  name?: string
   avatar?: string
-  provider: string
-  jobHistory?: JobHistory[]
-  education?: Education[]
-  skills?: string[]
-  projects?: Project[]
-  location?: string
-  phone?: string
+  provider?: string
 }
 
-export interface JobHistory {
-  id: number
-  company: string
-  position: string
-  startDate: string
-  endDate: string
-  description: string
-}
+const USER_KEY = 'currentUser'
+const USERS_DB_KEY = 'usersDb'
 
-export interface Education {
-  id: number
-  school: string
-  degree: string
-  fieldOfStudy: string
-  graduationDate: string
-}
-
-export interface Project {
-  id: number
-  name: string
-  description: string
-  technologies: string
-}
-
-// Local storage keys
-const USER_KEY = "middleai_user"
-const USERS_DB_KEY = "middleai_users_db"
-
-// User service functions
 export const userService = {
-  // Get current user from local storage
-  getCurrentUser: (): UserProfile | null => {
-    if (typeof window === "undefined") return null
-    const userJson = localStorage.getItem(USER_KEY)
-    return userJson ? JSON.parse(userJson) : null
-  },
-
-  // Save user to local storage and "database"
-  saveUser: (user: UserProfile): void => {
-    if (typeof window === "undefined") return
-
-    // Save current user
-    localStorage.setItem(USER_KEY, JSON.stringify(user))
-
-    // Update user in "database"
-    const usersDb = userService.getAllUsers()
-    const existingUserIndex = usersDb.findIndex((u) => u.id === user.id)
-
-    if (existingUserIndex >= 0) {
-      usersDb[existingUserIndex] = user
-    } else {
-      usersDb.push(user)
+  getCurrentUser: async (): Promise<User | null> => {
+    try {
+      const result = await chrome.storage.local.get([USER_KEY])
+      const user = result[USER_KEY]
+      return user ? user as User : null
+    } catch (error) {
+      console.error('Error getting current user:', error)
+      return null
     }
-
-    localStorage.setItem(USERS_DB_KEY, JSON.stringify(usersDb))
   },
 
-  // Get all users from "database"
-  getAllUsers: (): UserProfile[] => {
-    if (typeof window === "undefined") return []
-    const usersJson = localStorage.getItem(USERS_DB_KEY)
-    return usersJson ? JSON.parse(usersJson) : []
+  setCurrentUser: async (user: User): Promise<void> => {
+    try {
+      await chrome.storage.local.set({ [USER_KEY]: user })
+    } catch (error) {
+      console.error('Error setting current user:', error)
+    }
   },
 
-  // Login user
-  login: (userData: UserProfile): void => {
-    userService.saveUser(userData)
+  saveUser: async (user: User): Promise<void> => {
+    try {
+      // Get existing users
+      const result = await chrome.storage.local.get([USERS_DB_KEY])
+      const usersDb: Record<string, User> = result[USERS_DB_KEY] || {}
+      
+      // Add or update user
+      usersDb[user.id] = user
+      
+      // Save back to storage
+      await chrome.storage.local.set({ [USERS_DB_KEY]: usersDb })
+    } catch (error) {
+      console.error('Error saving user:', error)
+    }
   },
 
-  // Logout user
-  logout: (): void => {
-    if (typeof window === "undefined") return
-    localStorage.removeItem(USER_KEY)
+  getUsers: async (): Promise<User[]> => {
+    try {
+      const result = await chrome.storage.local.get([USERS_DB_KEY])
+      const usersDb: Record<string, User> = result[USERS_DB_KEY] || {}
+      return Object.values(usersDb)
+    } catch (error) {
+      console.error('Error getting users:', error)
+      return []
+    }
   },
 
-  // Update user profile
-  updateProfile: (profileData: Partial<UserProfile>): UserProfile | null => {
-    const currentUser = userService.getCurrentUser()
-    if (!currentUser) return null
-
-    const updatedUser = { ...currentUser, ...profileData }
-    userService.saveUser(updatedUser)
-    return updatedUser
-  },
-
-  // Check if user is logged in
-  isLoggedIn: (): boolean => {
-    return !!userService.getCurrentUser()
-  },
+  logout: async (): Promise<void> => {
+    try {
+      await chrome.storage.local.remove([USER_KEY])
+    } catch (error) {
+      console.error('Error during logout:', error)
+    }
+  }
 }
 
-// In a real application, this would be replaced with actual API calls to your backend
-export const apiService = {
-  // Simulate API call to save user data to database
-  saveUserToDatabase: async (user: UserProfile): Promise<UserProfile> => {
-    // Simulate network delay
-    await new Promise((resolve) => setTimeout(resolve, 500))
-
-    // In a real app, this would be an API call to your backend
-    userService.saveUser(user)
-
-    return user
-  },
-
-  // Simulate API call to get user data from database
-  getUserFromDatabase: async (userId: string): Promise<UserProfile | null> => {
-    // Simulate network delay
-    await new Promise((resolve) => setTimeout(resolve, 500))
-
-    // In a real app, this would be an API call to your backend
-    const users = userService.getAllUsers()
-    return users.find((u) => u.id === userId) || null
-  },
-}
+export default userService

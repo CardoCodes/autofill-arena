@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState, useEffect } from "react"
 import { Zap } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 
 type AutofillStatus = "ready" | "not-available" | "in-progress" | "neutral"
 
@@ -92,46 +92,64 @@ const AutofillPage: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-full">
-      <Card className="w-full max-w-md mx-auto bg-transparent border-0 shadow-none">
+      <Card className="w-full max-w-md mx-auto bg-[#282a36] border-0 shadow-none">
         <CardHeader className="text-center">
-          <CardTitle>Autofill Assistant</CardTitle>
-          <CardDescription>{currentUrl}</CardDescription>
-          <p className="text-sm text-muted-foreground">{statusMessage}</p>
+          <CardTitle className="text-[#f8f8f2]">Autofill Assistant</CardTitle>
+          <CardDescription className="text-[#6272a4]">{currentUrl}</CardDescription>
+          <p className="text-sm text-[#6272a4]">{statusMessage}</p>
         </CardHeader>
         <CardContent className="flex justify-center">
           <div className={`relative group ${status === "not-available" ? "cursor-not-allowed" : "cursor-pointer"}`}>
             {/* Aura/glow effect */}
             <div
-              className={`absolute inset-0 rounded-full blur-xl opacity-70 group-hover:opacity-100 transition-all duration-300 ${getStatusColor()}`}
+              className={`absolute inset-0 rounded-full blur-xl opacity-70 group-hover:opacity-100 transition-all duration-300 ${
+                status === "ready"
+                  ? "bg-[#50fa7b]"
+                  : status === "not-available"
+                    ? "bg-[#ff5555]"
+                    : status === "in-progress"
+                      ? "bg-[#f1fa8c]"
+                      : "bg-[#44475a]"
+              }`}
             ></div>
 
             {/* Inner glow */}
             <div
-              className={`absolute inset-0 rounded-full blur-md opacity-70 group-hover:opacity-100 transition-all duration-300 ${getStatusColor()}`}
+              className={`absolute inset-0 rounded-full blur-md opacity-70 group-hover:opacity-100 transition-all duration-300 ${
+                status === "ready"
+                  ? "bg-[#50fa7b]"
+                  : status === "not-available"
+                    ? "bg-[#ff5555]"
+                    : status === "in-progress"
+                      ? "bg-[#f1fa8c]"
+                      : "bg-[#44475a]"
+              }`}
             ></div>
 
             {/* Button */}
             <button
               onClick={handleAutofill}
               disabled={status === "not-available" || status === "neutral"}
-              className={`relative z-10 flex items-center justify-center w-40 h-40 rounded-full bg-card shadow-lg transform transition-transform duration-300 ${
-                status !== "not-available" && status !== "neutral" ? "hover:scale-105 active:scale-95" : "opacity-80"
+              className={`relative z-10 flex items-center justify-center w-40 h-40 rounded-full bg-[#282a36] border border-[#44475a] shadow-lg transform transition-all duration-300 ${
+                status !== "not-available" && status !== "neutral"
+                  ? "hover:scale-105 active:scale-95 hover:shadow-[0_0_15px_rgba(80,250,123,0.4)]"
+                  : "opacity-80"
               }`}
             >
               <div className="flex flex-col items-center">
                 <Zap
                   size={48}
-                  className={`mb-2 ${
+                  className={`mb-2 transition-all duration-300 ${
                     status === "ready"
-                      ? "text-green-500"
+                      ? "text-[#50fa7b]"
                       : status === "not-available"
-                        ? "text-destructive"
+                        ? "text-[#ff5555]"
                         : status === "in-progress"
-                          ? "text-yellow-500"
-                          : "text-muted-foreground"
+                          ? "text-[#f1fa8c]"
+                          : "text-[#6272a4]"
                   }`}
                 />
-                <span className="font-semibold">{getButtonText()}</span>
+                <span className="font-semibold text-[#f8f8f2]">{getButtonText()}</span>
               </div>
             </button>
           </div>
@@ -139,7 +157,7 @@ const AutofillPage: React.FC = () => {
       </Card>
 
       <div className="mt-8 text-center">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-[#6272a4]">
           Your profile information will be used to fill out job applications automatically.
         </p>
       </div>
