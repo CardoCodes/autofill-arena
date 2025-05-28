@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Github, Linkedin, ArrowRight, Loader2 } from "lucide-react"
 import { GoogleIcon } from "../../components/icons/GoogleIcon"
 import { authService } from "../../services/authService"
@@ -26,6 +26,22 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthStateChange }) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const x = (e.clientX / window.innerWidth) * 100
+      const y = (e.clientY / window.innerHeight) * 100
+      setMousePosition({ x, y })
+    }
+
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => window.removeEventListener('mousemove', handleMouseMove)
+  }, [])
+
+  const gradientStyle = {
+    backgroundImage: `radial-gradient(circle at ${mousePosition.x}% ${mousePosition.y}%, var(--gradient-from) 0%, var(--gradient-to) 100%)`,
+  }
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -77,27 +93,48 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthStateChange }) => {
     <div className="flex flex-col items-center justify-center min-h-[500px] p-6 bg-background">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-[#ff79c6] to-[#bd93f9] text-transparent bg-clip-text">
-            MiddleAI
+          <h1 
+            className="text-4xl font-bold bg-clip-text text-transparent transition-all duration-300 relative"
+            style={{
+              '--gradient-from': '#ff79c6',
+              '--gradient-to': '#bd93f9',
+              ...gradientStyle
+            } as React.CSSProperties}
+          >
+            AutoFill Arena
           </h1>
-          <p className="text-[#6272a4] dark:text-[#6272a4]">
-            Your AI-powered job application assistant
+          <p 
+            className="transition-all duration-300 bg-clip-text text-transparent"
+            style={{
+              '--gradient-from': '#6272a4',
+              '--gradient-to': '#8be9fd',
+              ...gradientStyle
+            } as React.CSSProperties}
+          >
+            Its You vs The Form
           </p>
         </div>
 
-        <Card className="border-[#44475a] bg-[#282a36] shadow-lg dracula-glow">
+        <Card className="bg-[#282a36] border-0 shadow-none">
           <CardHeader className="pb-2">
             <Tabs defaultValue={authMode} onValueChange={(value) => setAuthMode(value as AuthMode)}>
-              <TabsList className="grid w-full grid-cols-2 bg-[#44475a]">
+              <TabsList 
+                className="grid w-full grid-cols-2 bg-[#44475a] p-1 rounded-lg border-0 relative overflow-hidden"
+                style={{
+                  '--gradient-from': '#bd93f9',
+                  '--gradient-to': '#6272a4',
+                  ...gradientStyle
+                } as React.CSSProperties}
+              >
                 <TabsTrigger 
                   value="signin"
-                  className="data-[state=active]:bg-[#bd93f9] data-[state=active]:text-[#282a36]"
+                  className="data-[state=active]:bg-[#bd93f9] data-[state=active]:text-[#282a36] transition-all duration-300 hover:shadow-[0_0_10px_rgba(80,250,123,0.3)] rounded-md border-0 relative z-10"
                 >
                   Sign In
                 </TabsTrigger>
                 <TabsTrigger 
                   value="signup"
-                  className="data-[state=active]:bg-[#bd93f9] data-[state=active]:text-[#282a36]"
+                  className="data-[state=active]:bg-[#bd93f9] data-[state=active]:text-[#282a36] transition-all duration-300 hover:shadow-[0_0_10px_rgba(80,250,123,0.3)] rounded-md border-0 relative z-10"
                 >
                   Create Account
                 </TabsTrigger>
@@ -126,7 +163,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthStateChange }) => {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     required={authMode === "signup"}
-                    className="bg-[#44475a] border-[#6272a4] focus:border-[#bd93f9] text-[#f8f8f2]"
+                    className="bg-[#44475a] border-0 focus:ring-2 focus:ring-[#bd93f9] text-[#f8f8f2] transition-all duration-300 hover:shadow-[0_0_10px_rgba(80,250,123,0.3)] focus:shadow-[0_0_15px_rgba(80,250,123,0.4)]"
                   />
                 </div>
               )}
@@ -139,7 +176,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthStateChange }) => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="bg-[#44475a] border-[#6272a4] focus:border-[#bd93f9] text-[#f8f8f2]"
+                  className="bg-[#44475a] border-0 focus:ring-2 focus:ring-[#bd93f9] text-[#f8f8f2] transition-all duration-300 hover:shadow-[0_0_10px_rgba(80,250,123,0.3)] focus:shadow-[0_0_15px_rgba(80,250,123,0.4)]"
                 />
               </div>
 
@@ -151,7 +188,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthStateChange }) => {
                       <Button
                         type="button"
                         variant="link"
-                        className="p-0 h-auto text-xs text-[#8be9fd] hover:text-[#ff79c6]"
+                        className="p-0 h-auto text-xs text-[#8be9fd] hover:text-[#ff79c6] transition-all duration-300"
                         onClick={() => setAuthMode("reset-password")}
                       >
                         Forgot password?
@@ -164,15 +201,20 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthStateChange }) => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required={authMode !== "reset-password"}
-                    className="bg-[#44475a] border-[#6272a4] focus:border-[#bd93f9] text-[#f8f8f2]"
+                    className="bg-[#44475a] border-0 focus:ring-2 focus:ring-[#bd93f9] text-[#f8f8f2] transition-all duration-300 hover:shadow-[0_0_10px_rgba(80,250,123,0.3)] focus:shadow-[0_0_15px_rgba(80,250,123,0.4)]"
                   />
                 </div>
               )}
 
               <Button 
                 type="submit" 
-                className="w-full bg-[#ff79c6] hover:bg-[#ff79c6]/90 text-[#282a36]" 
+                className="w-full text-[#282a36] transition-all duration-300 hover:shadow-[0_0_15px_rgba(80,250,123,0.4)] border-0 relative overflow-hidden" 
                 disabled={loading}
+                style={{
+                  '--gradient-from': '#ff79c6',
+                  '--gradient-to': '#ff5555',
+                  ...gradientStyle
+                } as React.CSSProperties}
               >
                 {loading ? (
                   <>
@@ -204,25 +246,28 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthStateChange }) => {
                     variant="outline"
                     onClick={() => handleOAuthSignIn("github")}
                     disabled={loading}
-                    className="w-full border-[#6272a4] hover:bg-[#44475a] text-[#f8f8f2]"
+                    className="group relative w-full bg-[#44475a] border-0 text-[#f8f8f2] transition-all duration-300 hover:shadow-[0_0_10px_rgba(80,250,123,0.3)] hover:bg-[#44475a]/80 hover:scale-105 active:scale-95 overflow-hidden"
                   >
-                    <Github className="h-5 w-5" />
+                    <span className="absolute inset-0 bg-gradient-to-r from-black via-white to-[#50fa7b] opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
+                    <Github className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />
                   </Button>
                   <Button
                     variant="outline"
                     onClick={() => handleOAuthSignIn("google")}
                     disabled={loading}
-                    className="w-full border-[#6272a4] hover:bg-[#44475a] text-[#f8f8f2]"
+                    className="group relative w-full bg-[#44475a] border-0 text-[#f8f8f2] transition-all duration-300 hover:shadow-[0_0_10px_rgba(80,250,123,0.3)] hover:bg-[#44475a]/80 hover:scale-105 active:scale-95 overflow-hidden"
                   >
-                    <GoogleIcon className="h-5 w-5" />
+                    <span className="absolute inset-0 bg-gradient-to-r from-[#4285f4] via-[#34a853] to-[#fbbc05] opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
+                    <GoogleIcon className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />
                   </Button>
                   <Button
                     variant="outline"
                     onClick={() => handleOAuthSignIn("linkedin")}
                     disabled={loading}
-                    className="w-full border-[#6272a4] hover:bg-[#44475a] text-[#f8f8f2]"
+                    className="group relative w-full bg-[#44475a] border-0 text-[#f8f8f2] transition-all duration-300 hover:shadow-[0_0_10px_rgba(80,250,123,0.3)] hover:bg-[#44475a]/80 hover:scale-105 active:scale-95 overflow-hidden"
                   >
-                    <Linkedin className="h-5 w-5" />
+                    <span className="absolute inset-0 bg-gradient-to-r from-[#0a66c2] via-[#ffffff] to-[#0a66c2] opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
+                    <Linkedin className="h-5 w-5 transition-transform duration-300 group-hover:translate-y-[-2px] group-hover:translate-x-[2px]" />
                   </Button>
                 </div>
               </>
@@ -232,7 +277,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthStateChange }) => {
               <Button 
                 type="button" 
                 variant="link" 
-                className="mt-4 w-full text-[#8be9fd] hover:text-[#ff79c6]" 
+                className="mt-4 w-full text-[#8be9fd] hover:text-[#ff79c6] transition-all duration-300 border-0" 
                 onClick={() => setAuthMode("signin")}
               >
                 Back to sign in
