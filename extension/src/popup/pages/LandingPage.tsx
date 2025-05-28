@@ -5,6 +5,7 @@ import { useState, useEffect } from "react"
 import { Github, Linkedin, ArrowRight, Loader2 } from "lucide-react"
 import { GoogleIcon } from "../../components/icons/GoogleIcon"
 import { authService } from "../../services/authService"
+import type { Provider } from "@supabase/supabase-js"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -76,12 +77,13 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthStateChange }) => {
     }
   }
 
-  const handleOAuthSignIn = async (provider: "github" | "google" | "linkedin") => {
+  const handleOAuthSignIn = async (provider: Provider) => {
     setError(null)
     setLoading(true)
 
     try {
-      await authService.signInWithOAuth(provider)
+      const { error } = await authService.signInWithOAuth(provider)
+      if (error) throw new Error(error.message)
       // OAuth redirects to the provider's site, so we don't need to call onAuthStateChange here
     } catch (err: any) {
       setError(err.message)
@@ -200,7 +202,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthStateChange }) => {
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    required={authMode !== "reset-password"}
+                    required={true}
                     className="bg-[#44475a] border-0 focus:ring-2 focus:ring-[#bd93f9] text-[#f8f8f2] transition-all duration-300 hover:shadow-[0_0_10px_rgba(80,250,123,0.3)] focus:shadow-[0_0_15px_rgba(80,250,123,0.4)]"
                   />
                 </div>
