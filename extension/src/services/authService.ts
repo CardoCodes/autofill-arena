@@ -1,11 +1,32 @@
 /// <reference types="chrome"/>
+/// <reference types="webextension-polyfill" />
 
 import { supabase } from "../lib/supabase"
 import type { Provider } from "@supabase/supabase-js"
+import browser from 'webextension-polyfill';
 
 export interface AuthError {
   message: string
 }
+
+// Helper function to get extension URL in a cross-browser way
+const getExtensionUrl = () => {
+  try {
+    // Try Firefox/WebExtension API first
+    if (typeof browser !== 'undefined' && browser.runtime && browser.runtime.getURL) {
+      return browser.runtime.getURL('popup.html');
+    }
+    // Fallback to Chrome API
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL) {
+      return chrome.runtime.getURL('popup.html');
+    }
+    // Fallback to window origin for development/testing
+    return window.location.origin;
+  } catch (error) {
+    console.warn('Failed to get extension URL:', error);
+    return window.location.origin;
+  }
+};
 
 export const authService = {
   // Sign up with email and password
@@ -46,11 +67,8 @@ export const authService = {
   // Sign in with OAuth provider
   signInWithOAuth: async (provider: Provider) => {
     try {
-      let redirectTo = window.location.origin;
-      // Check if we're in a Chrome extension context
-      if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL) {
-        redirectTo = chrome.runtime.getURL('popup.html');
-      }
+      const redirectTo = getExtensionUrl();
+      console.log('OAuth redirect URL:', redirectTo); // Debug log
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider,
@@ -63,6 +81,7 @@ export const authService = {
       if (error) throw error
       return { data, error: null }
     } catch (error: any) {
+      console.error('OAuth error:', error); // Debug log
       return { data: null, error: { message: error.message } }
     }
   },
