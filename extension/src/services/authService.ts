@@ -3,7 +3,20 @@
 
 import { supabase } from "../lib/supabase"
 import type { Provider } from "@supabase/supabase-js"
-import browser from 'webextension-polyfill';
+
+// Conditionally import webextension-polyfill only in browser extension environment
+let browser: any = null;
+if (typeof window !== 'undefined') {
+  try {
+    // Only try to access webextension-polyfill in browser environment
+    const webextPolyfill = (globalThis as any).browser;
+    if (webextPolyfill) {
+      browser = webextPolyfill;
+    }
+  } catch (error) {
+    console.warn('webextension-polyfill not available:', error);
+  }
+}
 
 export interface AuthError {
   message: string
@@ -13,7 +26,7 @@ export interface AuthError {
 const getExtensionUrl = () => {
   try {
     // Try Firefox/WebExtension API first
-    if (typeof browser !== 'undefined' && browser.runtime && browser.runtime.getURL) {
+    if (browser && browser.runtime && browser.runtime.getURL) {
       return browser.runtime.getURL('popup.html');
     }
     // Fallback to Chrome API

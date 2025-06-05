@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 const Content: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -23,8 +24,9 @@ const Content: React.FC = () => {
   );
 };
 
-const root = document.createElement('div');
-root.id = 'ai-job-assistant-root';
-document.body.appendChild(root);
+const rootElement = document.createElement('div');
+rootElement.id = 'ai-job-assistant-root';
+document.body.appendChild(rootElement);
 
-ReactDOM.render(<Content />, root);
+const root = createRoot(rootElement);
+root.render(<Content />);

@@ -29,12 +29,18 @@ const Popup: React.FC = () => {
   // Initialize and load dark mode preference
   useEffect(() => {
     const initializeDarkMode = async () => {
-      try {
-        const result = await chrome.storage.local.get(['darkMode'])
-        setIsDarkMode(result.darkMode ?? true) // Default to true if not set
-      } catch (error) {
-        console.error('Error loading dark mode preference:', error)
-        setIsDarkMode(true) // Default to dark mode on error
+      // Check if we're in a browser extension environment
+      if (typeof chrome !== 'undefined' && chrome.storage) {
+        try {
+          const result = await chrome.storage.local.get(['darkMode'])
+          setIsDarkMode(result.darkMode ?? true) // Default to true if not set
+        } catch (error) {
+          console.error('Error loading dark mode preference:', error)
+          setIsDarkMode(true) // Default to dark mode on error
+        }
+      } else {
+        // We're not in an extension environment (e.g., during build)
+        setIsDarkMode(true) // Default to dark mode
       }
     }
 
@@ -44,21 +50,24 @@ const Popup: React.FC = () => {
   // Save dark mode preference and apply theme
   useEffect(() => {
     const updateDarkMode = async () => {
-      try {
-        await chrome.storage.local.set({ darkMode: isDarkMode })
-        
-        // Apply theme
-        if (isDarkMode) {
-          document.documentElement.classList.add("dark")
-          document.documentElement.style.backgroundColor = "#282a36"
-          document.documentElement.style.color = "#f8f8f2"
-        } else {
-          document.documentElement.classList.remove("dark")
-          document.documentElement.style.backgroundColor = "#ffffff"
-          document.documentElement.style.color = "#1a1a1a"
+      // Check if we're in a browser extension environment
+      if (typeof chrome !== 'undefined' && chrome.storage) {
+        try {
+          await chrome.storage.local.set({ darkMode: isDarkMode })
+        } catch (error) {
+          console.error('Error saving dark mode preference:', error)
         }
-      } catch (error) {
-        console.error('Error saving dark mode preference:', error)
+      }
+      
+      // Apply theme (this works in any environment)
+      if (isDarkMode) {
+        document.documentElement.classList.add("dark")
+        document.documentElement.style.backgroundColor = "#282a36"
+        document.documentElement.style.color = "#f8f8f2"
+      } else {
+        document.documentElement.classList.remove("dark")
+        document.documentElement.style.backgroundColor = "#ffffff"
+        document.documentElement.style.color = "#1a1a1a"
       }
     }
 

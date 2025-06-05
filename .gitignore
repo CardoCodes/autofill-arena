@@ -12,3 +12,5 @@ extension/.next
 .vscode/
 .cursor/
 node_modules/
+/extension/_next/
+/extension/out/

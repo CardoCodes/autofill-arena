@@ -14,9 +14,12 @@ const USERS_DB_KEY = 'usersDb'
 export const userService = {
   getCurrentUser: async (): Promise<User | null> => {
     try {
-      const result = await chrome.storage.local.get([USER_KEY])
-      const user = result[USER_KEY]
-      return user ? user as User : null
+      if (typeof chrome !== 'undefined' && chrome.storage) {
+        const result = await chrome.storage.local.get([USER_KEY])
+        const user = result[USER_KEY]
+        return user ? user as User : null
+      }
+      return null
     } catch (error) {
       console.error('Error getting current user:', error)
       return null
@@ -25,7 +28,9 @@ export const userService = {
 
   setCurrentUser: async (user: User): Promise<void> => {
     try {
-      await chrome.storage.local.set({ [USER_KEY]: user })
+      if (typeof chrome !== 'undefined' && chrome.storage) {
+        await chrome.storage.local.set({ [USER_KEY]: user })
+      }
     } catch (error) {
       console.error('Error setting current user:', error)
     }
@@ -33,15 +38,17 @@ export const userService = {
 
   saveUser: async (user: User): Promise<void> => {
     try {
-      // Get existing users
-      const result = await chrome.storage.local.get([USERS_DB_KEY])
-      const usersDb: Record<string, User> = result[USERS_DB_KEY] || {}
-      
-      // Add or update user
-      usersDb[user.id] = user
-      
-      // Save back to storage
-      await chrome.storage.local.set({ [USERS_DB_KEY]: usersDb })
+      if (typeof chrome !== 'undefined' && chrome.storage) {
+        // Get existing users
+        const result = await chrome.storage.local.get([USERS_DB_KEY])
+        const usersDb: Record<string, User> = result[USERS_DB_KEY] || {}
+        
+        // Add or update user
+        usersDb[user.id] = user
+        
+        // Save back to storage
+        await chrome.storage.local.set({ [USERS_DB_KEY]: usersDb })
+      }
     } catch (error) {
       console.error('Error saving user:', error)
     }
@@ -49,9 +56,12 @@ export const userService = {
 
   getUsers: async (): Promise<User[]> => {
     try {
-      const result = await chrome.storage.local.get([USERS_DB_KEY])
-      const usersDb: Record<string, User> = result[USERS_DB_KEY] || {}
-      return Object.values(usersDb)
+      if (typeof chrome !== 'undefined' && chrome.storage) {
+        const result = await chrome.storage.local.get([USERS_DB_KEY])
+        const usersDb: Record<string, User> = result[USERS_DB_KEY] || {}
+        return Object.values(usersDb)
+      }
+      return []
     } catch (error) {
       console.error('Error getting users:', error)
       return []
@@ -60,7 +70,9 @@ export const userService = {
 
   logout: async (): Promise<void> => {
     try {
-      await chrome.storage.local.remove([USER_KEY])
+      if (typeof chrome !== 'undefined' && chrome.storage) {
+        await chrome.storage.local.remove([USER_KEY])
+      }
     } catch (error) {
       console.error('Error during logout:', error)
     }

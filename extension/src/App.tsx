@@ -1,10 +1,9 @@
 import React from 'react';
-import Popup from './popup/Popup';
 
 const App: React.FC = () => {
   return (
     <div className="w-full h-full">
-      <Popup />
+      <h1>Simple App Test</h1>
     </div>
   );
 };
