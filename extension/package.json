@@ -29,7 +29,9 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && npm run build:extension",
+    "build:extension": "cp manifest.json out/ && cp -r scripts out/ && npm run fix-popup",
+    "fix-popup": "cp out/index.html out/popup.html",
     "start": "next start"
   },
   "browserslist": {
