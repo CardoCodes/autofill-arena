@@ -1,0 +1,33 @@
+{
+  "manifest_version": 2,
+  "name": "AutoFill Arena",
+  "version": "1.0.0",
+  "description": "AI-powered job application autofill assistant",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "<all_urls>"
+  ],
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_title": "AutoFill Arena"
+  },
+  "background": {
+    "scripts": ["scripts/background.js"]
+  },
+  "content_security_policy": "script-src 'self' 'wasm-unsafe-eval' 'sha256-Q+8tPsjVtiDsjF/Cv8FMOpg2Yg91oKFKDAJat1PPb2g=' 'sha256-XRBjDe91zdKle2HssO1N5lm8joL0n0EszSWr8XsOKqM=' 'sha256-jXICaJT0+JJPojVROMmsXYHutWH26sKlwPugOW1ZZZU=' 'sha256-GgDdNVme9Fm733ZQmrYpq/RKovddVcsT7imwTVAoh7M=' 'sha256-4pl6izFwYI6fzD4zXgpFwp5ep0H2ui5y3+i/ckaLIeQ=' 'sha256-NBT7e5z6JLQ0PU3kyhr3Fo/FpNA9mVpGhStpKhcW5xE='; object-src 'self'",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["scripts/content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "autofill-arena@example.com",
+      "strict_min_version": "78.0"
+    }
+  }
+}
+

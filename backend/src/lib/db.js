@@ -64,8 +64,8 @@ export class Database {
   }
 
   upsertAnswers(answers) {
-    const stmt = this.db.prepare('INSERT INTO answers (key, value) VALUES (@key, @value)
-      ON CONFLICT(key) DO UPDATE SET value = excluded.value')
+    const stmt = this.db.prepare(`INSERT INTO answers (key, value) VALUES (@key, @value)
+      ON CONFLICT(key) DO UPDATE SET value = excluded.value`)
     const tx = this.db.transaction((entries) => {
       for (const [key, value] of entries) stmt.run({ key, value })
     })

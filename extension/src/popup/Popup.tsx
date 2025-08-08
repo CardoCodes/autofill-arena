@@ -8,6 +8,7 @@ import { SettingsIcon, User, FileText, Sun, Moon, LogOut } from "lucide-react"
 import { useSpring, animated } from "@react-spring/web"
 import ProfilePage from "./pages/ProfilePage"
 import AutofillPage from "./pages/AutofillPage"
+import LandingGate from "./LandingGate"
 import SettingsPage from "./pages/SettingsPage"
 import LandingPage from "./pages/LandingPage"
 import { getProfile, saveProfile, getAnswers, saveAnswers } from "../services/localProfile"
@@ -20,7 +21,7 @@ const Popup: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>("autofill")
   const [isDarkMode, setIsDarkMode] = useState(true) // Default to dark mode
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
-  const [user, setUser] = useState<any>({ email: "local@example.com" })
+  const [user, setUser] = useState<any>(null)
   const [profile, setProfile] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -76,9 +77,15 @@ const Popup: React.FC = () => {
   useEffect(() => {
     const loadLocal = async () => {
       setIsLoading(true)
-      const p = await getProfile()
-      setProfile(p)
-      setIsLoading(false)
+      try {
+        const p = await getProfile()
+        setProfile(p)
+        setUser(p?.email ? { email: p.email } : null)
+      } catch (e) {
+        console.warn('Failed to load local profile', e)
+      } finally {
+        setIsLoading(false)
+      }
     }
     loadLocal()
   }, [])
@@ -95,11 +102,11 @@ const Popup: React.FC = () => {
   const handleAuthStateChange = async () => {
     const p = await getProfile()
     setProfile(p)
+    setUser(p?.email ? { email: p.email } : null)
   }
 
   const handleLogout = async () => {
     try {
-      await authService.signOut()
       setUser(null)
       setProfile(null)
       setCurrentPage("autofill")
@@ -150,7 +157,7 @@ const Popup: React.FC = () => {
   if (!user) {
     return (
       <div className={`h-[600px] w-[400px] ${isDarkMode ? "bg-[#282a36]" : "bg-white"}`}>
-        <LandingPage onAuthStateChange={handleAuthStateChange} />
+        <LandingGate />
       </div>
     )
   }

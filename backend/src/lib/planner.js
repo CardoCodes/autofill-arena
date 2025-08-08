@@ -2,17 +2,6 @@ import { webcrypto as nodeCrypto } from 'crypto'
 
 const PASSWORD_SYMBOLS = '!@#$%^&*()-_=+[]{};:,.?/'
 
-function getRandomValues(bytes) {
-  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
-    return crypto.getRandomValues(bytes)
-  }
-  // Node fallback
-  const { randomBytes } = await import('crypto')
-  const buf = randomBytes(bytes.length)
-  for (let i = 0; i < bytes.length; i++) bytes[i] = buf[i]
-  return bytes
-}
-
 function generatePassword(length = 20) {
   const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' + PASSWORD_SYMBOLS
   const bytes = new Uint8Array(length)

@@ -30,7 +30,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build && npm run build:extension",
-    "build:extension": "cp manifest.json out/ && cp -r scripts out/ && npm run fix-popup",
+    "build:extension": "cp manifest.chrome.json out/manifest.json && cp -r scripts out/ && npm run fix-popup && node scripts/fixPopupPaths.js",
+    "build:firefox": "next build && cp manifest.firefox.json out/manifest.json && cp -r scripts out/ && npm run fix-popup && node scripts/fixPopupPaths.js && node scripts/updateCspHashes.js",
     "fix-popup": "cp out/index.html out/popup.html",
     "start": "next start"
   },

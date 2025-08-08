@@ -1,14 +1,19 @@
 const API_BASE = 'http://localhost:5123'
 
-chrome.runtime.onInstalled.addListener(() => {
-  console.log('[autofill] background ready')
-})
+try {
+  chrome.runtime.onInstalled.addListener(() => {
+    console.log('[autofill] background ready')
+  })
+} catch {}
 
-chrome.action.onClicked.addListener((tab) => {
-  if (tab && tab.id) {
-    chrome.tabs.sendMessage(tab.id, { action: 'scanAndFill', apiBase: API_BASE })
-  }
-})
+const actionApi = (chrome.action && chrome.action.onClicked) ? chrome.action : (chrome.browserAction || null)
+if (actionApi && actionApi.onClicked) {
+  actionApi.onClicked.addListener((tab) => {
+    if (tab && tab.id) {
+      chrome.tabs.sendMessage(tab.id, { action: 'scanAndFill', apiBase: API_BASE })
+    }
+  })
+}
 
 // Relay messages if needed
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -16,4 +21,4 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     sendResponse({ apiBase: API_BASE })
   }
 })
-export {};
+
