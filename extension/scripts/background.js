@@ -6,7 +6,7 @@ chrome.runtime.onInstalled.addListener(() => {
 
 chrome.action.onClicked.addListener((tab) => {
   if (tab && tab.id) {
-    chrome.tabs.sendMessage(tab.id, { action: 'scanAndFill', apiBase: API_BASE })
+    chrome.tabs.sendMessage(tab.id, { action: 'toggleOverlay', apiBase: API_BASE })
   }
 })
 
