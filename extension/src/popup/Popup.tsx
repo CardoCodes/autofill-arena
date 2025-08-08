@@ -10,9 +10,7 @@ import ProfilePage from "./pages/ProfilePage"
 import AutofillPage from "./pages/AutofillPage"
 import SettingsPage from "./pages/SettingsPage"
 import LandingPage from "./pages/LandingPage"
-import { authService } from "../services/authService"
-import { profileService, type ProfileWithDetails } from "../services/profileService"
-import { supabase } from "../lib/supabase"
+import { getProfile, saveProfile, getAnswers, saveAnswers } from "../services/localProfile"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 
@@ -22,17 +20,17 @@ const Popup: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>("autofill")
   const [isDarkMode, setIsDarkMode] = useState(true) // Default to dark mode
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
-  const [user, setUser] = useState<any>(null)
-  const [profile, setProfile] = useState<ProfileWithDetails | null>(null)
+  const [user, setUser] = useState<any>({ email: "local@example.com" })
+  const [profile, setProfile] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   // Initialize and load dark mode preference
   useEffect(() => {
     const initializeDarkMode = async () => {
       // Check if we're in a browser extension environment
-      if (typeof chrome !== 'undefined' && chrome.storage) {
+      if (typeof browser !== 'undefined' && browser.storage) {
         try {
-          const result = await chrome.storage.local.get(['darkMode'])
+          const result = await browser.storage.local.get(['darkMode'])
           setIsDarkMode(result.darkMode ?? true) // Default to true if not set
         } catch (error) {
           console.error('Error loading dark mode preference:', error)
@@ -51,9 +49,9 @@ const Popup: React.FC = () => {
   useEffect(() => {
     const updateDarkMode = async () => {
       // Check if we're in a browser extension environment
-      if (typeof chrome !== 'undefined' && chrome.storage) {
+      if (typeof browser !== 'undefined' && browser.storage) {
         try {
-          await chrome.storage.local.set({ darkMode: isDarkMode })
+          await browser.storage.local.set({ darkMode: isDarkMode })
         } catch (error) {
           console.error('Error saving dark mode preference:', error)
         }
@@ -76,41 +74,13 @@ const Popup: React.FC = () => {
 
   // Check for authentication state changes
   useEffect(() => {
-    const checkUser = async () => {
+    const loadLocal = async () => {
       setIsLoading(true)
-      const { user } = await authService.getCurrentUser()
-      setUser(user)
-
-      if (user) {
-        // Fetch user profile data
-        const { profile } = await profileService.getCompleteProfile(user.id)
-        setProfile(profile)
-      }
-
+      const p = await getProfile()
+      setProfile(p)
       setIsLoading(false)
     }
-
-    checkUser()
-
-    // Set up auth state change listener
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
-        setUser(session?.user || null)
-        if (session?.user) {
-          const { profile } = await profileService.getCompleteProfile(session.user.id)
-          setProfile(profile)
-        }
-      } else if (event === "SIGNED_OUT") {
-        setUser(null)
-        setProfile(null)
-        // Redirect to landing page on sign out
-        setCurrentPage("autofill")
-      }
-    })
-
-    return () => {
-      authListener.subscription.unsubscribe()
-    }
+    loadLocal()
   }, [])
 
   const settingsAnimation = useSpring({
@@ -123,13 +93,8 @@ const Popup: React.FC = () => {
   })
 
   const handleAuthStateChange = async () => {
-    const { user } = await authService.getCurrentUser()
-    setUser(user)
-
-    if (user) {
-      const { profile } = await profileService.getCompleteProfile(user.id)
-      setProfile(profile)
-    }
+    const p = await getProfile()
+    setProfile(p)
   }
 
   const handleLogout = async () => {
@@ -151,21 +116,15 @@ const Popup: React.FC = () => {
         return <AutofillPage />
       case "profile":
         return (
-          <ProfilePage
-            user={user}
-            profile={profile}
-            onProfileUpdate={async (updatedProfile) => {
-              if (user) {
-                // Update profile in database
-                const { profile: newProfile } = await profileService.updateProfile(user.id, updatedProfile)
-                if (newProfile) {
-                  // Refresh complete profile
-                  const { profile: completeProfile } = await profileService.getCompleteProfile(user.id)
-                  setProfile(completeProfile)
-                }
-              }
-            }}
-          />
+              <ProfilePage
+                user={user}
+                profile={profile}
+                onProfileUpdate={async (updatedProfile) => {
+                  await saveProfile(updatedProfile)
+                  const p = await getProfile()
+                  setProfile(p)
+                }}
+              />
         )
       default:
         return <AutofillPage />

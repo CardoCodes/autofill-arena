@@ -4,8 +4,7 @@ import type React from "react"
 import { useState, useEffect } from "react"
 import { Github, Linkedin, ArrowRight, Loader2 } from "lucide-react"
 import { GoogleIcon } from "../../components/icons/GoogleIcon"
-import { authService } from "../../services/authService"
-import type { Provider } from "@supabase/supabase-js"
+import { getProfile, saveProfile } from "../../services/localProfile"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -49,27 +48,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthStateChange }) => {
     setError(null)
     setMessage(null)
     setLoading(true)
-
     try {
-      if (authMode === "signin") {
-        const { user, error } = await authService.signInWithEmail(email, password)
-        if (error) throw new Error(error.message)
-        if (user) {
-          onAuthStateChange()
-        }
-      } else if (authMode === "signup") {
-        const { user, error } = await authService.signUp(email, password, fullName)
-        if (error) throw new Error(error.message)
-        if (user) {
-          setMessage("Check your email to confirm your account")
-          setAuthMode("signin")
-        }
-      } else if (authMode === "reset-password") {
-        const { error } = await authService.resetPassword(email)
-        if (error) throw new Error(error.message)
-        setMessage("Check your email for password reset instructions")
-        setAuthMode("signin")
-      }
+      // Local-only: just persist email to local backend profile for now
+      const profile = await getProfile()
+      await saveProfile({ ...profile, email, full_name: fullName || profile.full_name })
+      onAuthStateChange()
     } catch (err: any) {
       setError(err.message)
     } finally {
@@ -77,18 +60,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthStateChange }) => {
     }
   }
 
-  const handleOAuthSignIn = async (provider: Provider) => {
-    setError(null)
-    setLoading(true)
-
-    try {
-      const { error } = await authService.signInWithOAuth(provider)
-      if (error) throw new Error(error.message)
-      // OAuth redirects to the provider's site, so we don't need to call onAuthStateChange here
-    } catch (err: any) {
-      setError(err.message)
-      setLoading(false)
-    }
+  const handleOAuthSignIn = async (_provider: any) => {
+    setMessage("OAuth is disabled in local mode.")
   }
 
   return (

@@ -1,8 +1,7 @@
 /// <reference types="chrome"/>
 /// <reference types="webextension-polyfill" />
 
-import { supabase } from "../lib/supabase"
-import type { Provider } from "@supabase/supabase-js"
+import { getProfile, saveProfile } from "./localProfile"
 
 // Conditionally import webextension-polyfill only in browser extension environment
 let browser: any = null;
@@ -43,94 +42,38 @@ const getExtensionUrl = () => {
 
 export const authService = {
   // Sign up with email and password
-  signUp: async (email: string, password: string, fullName: string) => {
+  signUp: async (email: string, _password: string, fullName: string) => {
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: fullName,
-          },
-        },
-      })
-
-      if (error) throw error
-      return { user: data.user, error: null }
+      const profile = await getProfile()
+      await saveProfile({ ...profile, email, full_name: fullName })
+      return { user: { email } as any, error: null }
     } catch (error: any) {
       return { user: null, error: { message: error.message } }
     }
   },
 
   // Sign in with email and password
-  signInWithEmail: async (email: string, password: string) => {
+  signInWithEmail: async (email: string, _password: string) => {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-
-      if (error) throw error
-      return { user: data.user, error: null }
+      const profile = await getProfile()
+      if (!profile.email) await saveProfile({ ...profile, email })
+      return { user: { email } as any, error: null }
     } catch (error: any) {
       return { user: null, error: { message: error.message } }
     }
   },
 
   // Sign in with OAuth provider
-  signInWithOAuth: async (provider: Provider) => {
-    try {
-      const redirectTo = getExtensionUrl();
-      console.log('OAuth redirect URL:', redirectTo); // Debug log
-      
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider,
-        options: {
-          redirectTo,
-          skipBrowserRedirect: false,
-        },
-      })
-
-      if (error) throw error
-      return { data, error: null }
-    } catch (error: any) {
-      console.error('OAuth error:', error); // Debug log
-      return { data: null, error: { message: error.message } }
-    }
+  signInWithOAuth: async (_provider: any) => {
+    return { data: null, error: { message: 'OAuth disabled in local mode' } }
   },
 
   // Sign out
-  signOut: async () => {
-    try {
-      const { error } = await supabase.auth.signOut()
-      if (error) throw error
-      return { error: null }
-    } catch (error: any) {
-      return { error: { message: error.message } }
-    }
-  },
+  signOut: async () => ({ error: null }),
 
   // Get current user
-  getCurrentUser: async () => {
-    try {
-      const { data, error } = await supabase.auth.getUser()
-      if (error) throw error
-      return { user: data.user, error: null }
-    } catch (error: any) {
-      return { user: null, error: { message: error.message } }
-    }
-  },
+  getCurrentUser: async () => ({ user: { email: 'local@example.com' } as any, error: null }),
 
   // Reset password
-  resetPassword: async (email: string) => {
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
-      })
-      if (error) throw error
-      return { error: null }
-    } catch (error: any) {
-      return { error: { message: error.message } }
-    }
-  },
+  resetPassword: async (_email: string) => ({ error: { message: 'Not available in local mode' } }),
 }

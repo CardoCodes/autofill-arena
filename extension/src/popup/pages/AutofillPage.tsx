@@ -80,13 +80,20 @@ const AutofillPage: React.FC = () => {
     }
   }
 
-  const handleAutofill = () => {
-    if (status === "ready" || status === "in-progress") {
-      // In a real extension, this would trigger the autofill process
-      setStatusMessage("Filling form...")
-      setTimeout(() => {
-        setStatusMessage("Form filled successfully!")
-      }, 1500)
+  const handleAutofill = async () => {
+    if (status !== "ready" && status !== "in-progress") return
+    setStatusMessage("Filling form...")
+    try {
+      // send message to active tab content script
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
+      if (tab?.id) {
+        await chrome.tabs.sendMessage(tab.id, { action: 'scanAndFill' })
+        setStatusMessage("Triggered autofill.")
+      } else {
+        setStatusMessage("No active tab found.")
+      }
+    } catch (e) {
+      setStatusMessage("Failed to trigger autofill.")
     }
   }
 
