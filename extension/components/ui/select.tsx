@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+// UI select is built on Radix Select primitives
 import * as SelectPrimitive from "@radix-ui/react-select"
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react"
 
