@@ -8,7 +8,6 @@ import { SettingsIcon, User, FileText, Sun, Moon, LogOut } from "lucide-react"
 import { useSpring, animated } from "@react-spring/web"
 import ProfilePage from "./pages/ProfilePage"
 import AutofillPage from "./pages/AutofillPage"
-import LandingGate from "./LandingGate"
 import SettingsPage from "./pages/SettingsPage"
 import LandingPage from "./pages/LandingPage"
 import { getProfile, saveProfile, getAnswers, saveAnswers } from "../services/localProfile"
@@ -157,7 +156,7 @@ const Popup: React.FC = () => {
   if (!user) {
     return (
       <div className={`h-[600px] w-[400px] ${isDarkMode ? "bg-[#282a36]" : "bg-white"}`}>
-        <LandingGate />
+        <LandingPage onAuthStateChange={handleAuthStateChange} />
       </div>
     )
   }
