@@ -126,6 +126,7 @@ const Popup: React.FC = () => {
               <ProfilePage
                 user={user}
                 profile={profile}
+                isDarkMode={isDarkMode}
                 onProfileUpdate={async (updatedProfile) => {
                   await saveProfile(updatedProfile)
                   const p = await getProfile()
