@@ -1,155 +1,31 @@
 ;(() => {
   const UI_ID = 'ai-job-assistant-root'
-  const CONTENT_ID = 'ai-job-assistant-content'
-  const HEADER_ID = 'ai-job-assistant-header'
-  const CLOSE_ID = 'ai-job-assistant-close'
   const API_DEFAULT = 'http://localhost:5123'
 
-  let isDragging = false
-  let dragOffsetX = 0
-  let dragOffsetY = 0
-
-  async function getOverlayOpacity() {
-    try {
-      if (typeof browser !== 'undefined' && browser.storage?.local?.get) {
-        const res = await browser.storage.local.get(['overlayOpacity'])
-        const v = res?.overlayOpacity
-        if (typeof v === 'number' && v >= 0.1 && v <= 1) return v
-      }
-    } catch {}
-    try {
-      if (typeof chrome !== 'undefined' && chrome.storage?.local?.get) {
-        const res = await new Promise((resolve) => chrome.storage.local.get(['overlayOpacity'], resolve))
-        const v = res?.overlayOpacity
-        if (typeof v === 'number' && v >= 0.1 && v <= 1) return v
-      }
-    } catch {}
-    return 0.9
-  }
-
-  function centerElement(el) {
-    const width = el.offsetWidth || 420
-    const height = el.offsetHeight || 260
-    const left = Math.max(12, Math.round((window.innerWidth - width) / 2))
-    const top = Math.max(12, Math.round((window.innerHeight - height) / 2))
-    el.style.left = left + 'px'
-    el.style.top = top + 'px'
-  }
-
-  function attachDragHandlers(el, handle) {
-    handle.style.cursor = 'move'
-    handle.addEventListener('mousedown', (e) => {
-      isDragging = true
-      const rect = el.getBoundingClientRect()
-      dragOffsetX = e.clientX - rect.left
-      dragOffsetY = e.clientY - rect.top
-      e.preventDefault()
-    })
-    document.addEventListener('mousemove', (e) => {
-      if (!isDragging) return
-      const x = Math.max(0, Math.min(window.innerWidth - el.offsetWidth, e.clientX - dragOffsetX))
-      const y = Math.max(0, Math.min(window.innerHeight - el.offsetHeight, e.clientY - dragOffsetY))
-      el.style.left = x + 'px'
-      el.style.top = y + 'px'
-    })
-    document.addEventListener('mouseup', () => {
-      isDragging = false
-    })
-  }
-
-  async function ensureUi() {
+  function ensureUi() {
     let el = document.getElementById(UI_ID)
-    const opacity = await getOverlayOpacity()
     if (!el) {
       el = document.createElement('div')
       el.id = UI_ID
       el.style.position = 'fixed'
+      el.style.top = '12px'
+      el.style.right = '12px'
       el.style.zIndex = '2147483647'
-      el.style.width = '420px'
-      el.style.maxWidth = '90vw'
-      el.style.background = `rgba(255,255,255,${opacity})`
+      el.style.background = 'white'
       el.style.border = '1px solid #ddd'
-      el.style.boxShadow = '0 12px 28px rgba(0,0,0,0.18)'
-      el.style.borderRadius = '10px'
+      el.style.boxShadow = '0 8px 24px rgba(0,0,0,0.12)'
+      el.style.borderRadius = '8px'
+      el.style.padding = '12px'
       el.style.fontFamily = 'system-ui, sans-serif'
-      el.style.fontSize = '13px'
-      el.style.color = '#1a1a1a'
-      el.style.padding = '0'
-      el.style.userSelect = 'none'
-
-      const header = document.createElement('div')
-      header.id = HEADER_ID
-      header.style.display = 'flex'
-      header.style.alignItems = 'center'
-      header.style.gap = '8px'
-      header.style.padding = '10px 12px'
-      header.style.borderBottom = '1px solid #eaeaea'
-      header.style.background = 'rgba(255,255,255,0.85)'
-
-      const close = document.createElement('button')
-      close.id = CLOSE_ID
-      close.textContent = '✕'
-      close.setAttribute('aria-label', 'Close')
-      close.style.background = 'transparent'
-      close.style.border = 'none'
-      close.style.color = '#555'
-      close.style.fontSize = '14px'
-      close.style.cursor = 'pointer'
-      close.addEventListener('click', removeUi)
-
-      const title = document.createElement('div')
-      title.textContent = 'AutoFill Arena'
-      title.style.fontWeight = '600'
-      title.style.flex = '1'
-
-      header.appendChild(close)
-      header.appendChild(title)
-
-      const content = document.createElement('div')
-      content.id = CONTENT_ID
-      content.style.padding = '12px'
-      content.style.minHeight = '120px'
-
-      el.appendChild(header)
-      el.appendChild(content)
+      el.style.fontSize = '12px'
       document.body.appendChild(el)
-
-      // Position after in DOM so offsetWidth is available
-      centerElement(el)
-
-      // Dragging
-      attachDragHandlers(el, header)
-
-      // React to opacity changes live
-      try {
-        if (typeof chrome !== 'undefined' && chrome.storage?.onChanged) {
-          chrome.storage.onChanged.addListener((changes, area) => {
-            if (area === 'local' && changes.overlayOpacity) {
-              const v = changes.overlayOpacity.newValue
-              if (typeof v === 'number') {
-                el.style.background = `rgba(255,255,255,${v})`
-              }
-            }
-          })
-        }
-      } catch {}
-    } else {
-      // Update opacity if it changed
-      el.style.background = `rgba(255,255,255,${opacity})`
     }
     return el
   }
 
   function setUi(text) {
-    const ui = document.getElementById(UI_ID)
-    if (!ui) return
-    const content = ui.querySelector('#' + CONTENT_ID)
-    if (content) {
-      content.textContent = text
-    } else {
-      // Fallback: legacy
-      ui.textContent = text
-    }
+    const ui = ensureUi()
+    ui.textContent = text
   }
 
   function removeUi() {
@@ -195,14 +71,18 @@
   }
 
   function findLabelText(el) {
+    // for/label
     if (el.id) {
       const lbl = document.querySelector(`label[for="${CSS.escape(el.id)}"]`)
       if (lbl) return lbl.textContent?.trim() || ''
     }
+    // aria-label
     const aria = el.getAttribute('aria-label')
     if (aria) return aria
+    // closest label ancestor
     const parentLabel = el.closest('label')
     if (parentLabel) return parentLabel.textContent?.trim() || ''
+    // nearby text
     const prev = el.previousElementSibling
     if (prev && prev.tagName.toLowerCase() === 'label') return prev.textContent?.trim() || ''
     return ''
@@ -218,7 +98,6 @@
   }
 
   async function planAndFill() {
-    await ensureUi()
     setUi('Scanning form...')
     const apiBase = await getApiBase()
     const url = location.href
@@ -240,6 +119,7 @@
           setElementValue(el, step.value)
           filled++
         } else if (step.action === 'setFile') {
+          // cannot programmatically set file from disk; show prompt
           markFileField(el, step.value)
         }
       }
@@ -248,6 +128,7 @@
         await promptLearn(plan, apiBase)
       } else {
         setUi(`Filled ${filled} fields.`)
+        setTimeout(removeUi, 1500)
       }
     } catch (e) {
       console.error(e)
@@ -323,6 +204,7 @@
     }
   })
 
+  // After filling, if password was generated, save credentials
   window.addEventListener('submit', async (e) => {
     try {
       const form = e.target
