@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-import { useEffect, useState } from "react"
 import { X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -15,52 +14,6 @@ interface SettingsPageProps {
 }
 
 const SettingsPage: React.FC<SettingsPageProps> = ({ onClose, isDarkMode }) => {
-  const [overlayOpacity, setOverlayOpacity] = useState<number>(0.9)
-
-  useEffect(() => {
-    (async () => {
-      try {
-        // @ts-ignore
-        if (typeof browser !== 'undefined' && browser.storage?.local?.get) {
-          // @ts-ignore
-          const res = await browser.storage.local.get(['overlayOpacity'])
-          const v = res?.overlayOpacity
-          if (typeof v === 'number') setOverlayOpacity(v)
-          return
-        }
-      } catch {}
-      try {
-        if (typeof chrome !== 'undefined' && chrome.storage?.local?.get) {
-          const res = await new Promise<any>((resolve) => chrome.storage.local.get(['overlayOpacity'], resolve))
-          const v = res?.overlayOpacity
-          if (typeof v === 'number') setOverlayOpacity(v)
-        }
-      } catch {}
-    })()
-  }, [])
-
-  const persistOpacity = async (value: number) => {
-    try {
-      // @ts-ignore
-      if (typeof browser !== 'undefined' && browser.storage?.local?.set) {
-        // @ts-ignore
-        await browser.storage.local.set({ overlayOpacity: value })
-        return
-      }
-    } catch {}
-    try {
-      if (typeof chrome !== 'undefined' && chrome.storage?.local?.set) {
-        await new Promise<void>((resolve) => chrome.storage.local.set({ overlayOpacity: value }, () => resolve()))
-      }
-    } catch {}
-  }
-
-  const handleOpacityChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = Math.min(1, Math.max(0.1, Number(e.target.value)))
-    setOverlayOpacity(value)
-    await persistOpacity(value)
-  }
-
   return (
     <div className={`h-full overflow-y-auto p-4 ${isDarkMode ? "bg-[#282a36]" : "bg-white"}`}>
       <div className="flex justify-between items-center mb-6">
@@ -76,28 +29,6 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ onClose, isDarkMode }) => {
       </div>
 
       <div className="space-y-6">
-        <Card className={`${isDarkMode ? "bg-[#44475a] border-0" : "bg-white border border-gray-200"} shadow-none`}>
-          <CardHeader>
-            <CardTitle className={isDarkMode ? "text-[#f8f8f2]" : "text-gray-900"}>Overlay</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="overlay-opacity" className={isDarkMode ? "text-[#f8f8f2]" : "text-gray-900"}>Opacity</Label>
-              <input
-                id="overlay-opacity"
-                type="range"
-                min={0.1}
-                max={1}
-                step={0.05}
-                value={overlayOpacity}
-                onChange={handleOpacityChange}
-                className="w-full"
-              />
-              <div className={isDarkMode ? "text-[#f8f8f2]" : "text-gray-900"}>{Math.round(overlayOpacity * 100)}%</div>
-            </div>
-          </CardContent>
-        </Card>
-
         <Card className={`${isDarkMode ? "bg-[#44475a] border-0" : "bg-white border border-gray-200"} shadow-none`}>
           <CardHeader>
             <CardTitle className={isDarkMode ? "text-[#f8f8f2]" : "text-gray-900"}>Notifications</CardTitle>
