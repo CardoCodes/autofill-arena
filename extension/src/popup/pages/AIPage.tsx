@@ -1,42 +1,18 @@
 import React, { useState } from 'react';
+import { AI_MODES, aiModeButtonClasses, type AiMode } from '../constants/pages'
 
 const AIPage: React.FC = () => {
-  const [selectedOption, setSelectedOption] = useState<'cover-letter' | 'resume' | 'questions'>('cover-letter');
+  const [selectedOption, setSelectedOption] = useState<AiMode>('cover-letter');
 
   return (
     <div>
       <h2 className="text-xl font-semibold mb-4">AI Assistant</h2>
       <div className="flex space-x-2 mb-4">
-        <button
-          className={`px-3 py-1 rounded ${
-            selectedOption === 'cover-letter'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200'
-          }`}
-          onClick={() => setSelectedOption('cover-letter')}
-        >
-          Cover Letter
-        </button>
-        <button
-          className={`px-3 py-1 rounded ${
-            selectedOption === 'resume'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200'
-          }`}
-          onClick={() => setSelectedOption('resume')}
-        >
-          Resume
-        </button>
-        <button
-          className={`px-3 py-1 rounded ${
-            selectedOption === 'questions'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200'
-          }`}
-          onClick={() => setSelectedOption('questions')}
-        >
-          Questions
-        </button>
+        {AI_MODES.map(mode => (
+          <button key={mode.id} className={aiModeButtonClasses(selectedOption === mode.id)} onClick={() => setSelectedOption(mode.id)}>
+            {mode.label}
+          </button>
+        ))}
       </div>
       <div className="border dark:border-gray-600 rounded p-3 dark:bg-gray-700">
         <textarea
