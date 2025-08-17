@@ -7,9 +7,10 @@ interface Props {
   status: AutofillStatus
   onClick: () => void
   disabled?: boolean
+  isDarkMode?: boolean
 }
 
-export function AutofillStatusButton({ status, onClick, disabled }: Props) {
+export function AutofillStatusButton({ status, onClick, disabled, isDarkMode = true }: Props) {
   const colors = AUTOFILL_STATUS_COLORS[status]
   const isDisabled = disabled || status === "not-available" || status === "neutral"
 
@@ -26,10 +27,13 @@ export function AutofillStatusButton({ status, onClick, disabled }: Props) {
       <button
         onClick={onClick}
         disabled={isDisabled}
-        className={`relative z-10 flex items-center justify-center w-40 h-40 rounded-full shadow-lg transform transition-all duration-300 ${
+        className={`relative z-10 flex items-center justify-center w-40 h-40 rounded-full shadow-lg transform transition-all duration-300 border ${
           !isDisabled ? "hover:scale-105 active:scale-95" : "opacity-80"
         }`}
-        style={{ backgroundColor: THEME_COLORS.backgroundDark, border: `1px solid ${colors.buttonBorder}` }}
+        style={{
+          borderColor: colors.buttonBorder,
+          backgroundColor: isDarkMode ? "#282a36" : "#ffffff",
+        }}
       >
         <div className="flex flex-col items-center">
           <Zap size={48} style={{ color: colors.icon }} className="mb-2 transition-all duration-300" />

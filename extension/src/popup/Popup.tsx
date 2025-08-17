@@ -121,7 +121,7 @@ const Popup: React.FC = () => {
   const renderPage = () => {
     switch (currentPage) {
       case "autofill":
-        return <AutofillPage />
+        return <AutofillPage isDarkMode={isDarkMode} />
       case "profile":
         return (
               <ProfilePage

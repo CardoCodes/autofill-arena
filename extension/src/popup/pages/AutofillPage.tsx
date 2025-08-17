@@ -8,7 +8,9 @@ import { AutofillStatusButton } from "../components/AutofillStatusButton"
 
 type T = AutofillStatus
 
-const AutofillPage: React.FC = () => {
+interface Props { isDarkMode?: boolean }
+
+const AutofillPage: React.FC<Props> = ({ isDarkMode = true }) => {
   const [status, setStatus] = useState<AutofillStatus>("neutral")
   const [currentUrl, setCurrentUrl] = useState<string>("")
   const [statusMessage, setStatusMessage] = useState<string>("Checking page compatibility...")
@@ -65,22 +67,22 @@ const AutofillPage: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-full">
-      <Card className="w-full max-w-md mx-auto bg-[#282a36] border-0 shadow-none">
+      <Card className={`w-full max-w-md mx-auto border-0 shadow-none ${isDarkMode ? "bg-[#282a36]" : "bg-white"}`}>
         <CardHeader className="text-center">
-          <CardTitle className="text-[#f8f8f2]">Autofill Assistant</CardTitle>
-          <CardDescription className="text-[#6272a4]">{currentUrl}</CardDescription>
-          <p className="text-sm text-[#6272a4]">{statusMessage}</p>
+          <CardTitle className={`${isDarkMode ? "text-[#f8f8f2]" : "text-[#1a1a1a]"}`}>Autofill Assistant</CardTitle>
+          <CardDescription className={`${isDarkMode ? "text-[#6272a4]" : "text-gray-500"}`}>{currentUrl}</CardDescription>
+          <p className={`text-sm ${isDarkMode ? "text-[#6272a4]" : "text-gray-500"}`}>{statusMessage}</p>
         </CardHeader>
         <CardContent className="flex justify-center">
           <div className="flex flex-col items-center gap-2">
-            <AutofillStatusButton status={status} onClick={handleAutofill} />
-            <span className="font-semibold text-[#f8f8f2]">{getButtonText()}</span>
+            <AutofillStatusButton status={status} onClick={handleAutofill} isDarkMode={isDarkMode} />
+            <span className={`font-semibold ${isDarkMode ? "text-[#f8f8f2]" : "text-[#1a1a1a]"}`}>{getButtonText()}</span>
           </div>
         </CardContent>
       </Card>
 
       <div className="mt-8 text-center">
-        <p className="text-sm text-[#6272a4]">
+        <p className={`text-sm ${isDarkMode ? "text-[#6272a4]" : "text-gray-500"}`}>
           Your profile information will be used to fill out job applications automatically.
         </p>
       </div>
