@@ -51,6 +51,9 @@ export type LocalProfile = {
   website?: string
   linkedin?: string
   github?: string
+  // Agent settings
+  agent_provider?: string
+  agent_api_key?: string
 }
 
 export async function getProfile(): Promise<LocalProfile> {

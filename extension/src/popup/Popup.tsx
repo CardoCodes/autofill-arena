@@ -4,7 +4,6 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
-import { SettingsIcon, User, FileText, Sun, Moon, LogOut } from "lucide-react"
 import { useSpring, animated } from "@react-spring/web"
 import ProfilePage from "./pages/ProfilePage"
 import AutofillPage from "./pages/AutofillPage"
@@ -14,6 +13,8 @@ import LandingPage from "./pages/LandingPage"
 import { getProfile, saveProfile, getAnswers, saveAnswers } from "../services/localProfile"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { PopupHeader } from "./components/layout/PopupHeader"
+import { BottomNav } from "./components/layout/BottomNav"
 
 type Page = "autofill" | "profile"
 
@@ -126,6 +127,7 @@ const Popup: React.FC = () => {
               <ProfilePage
                 user={user}
                 profile={profile}
+                isDarkMode={isDarkMode}
                 onProfileUpdate={async (updatedProfile) => {
                   await saveProfile(updatedProfile)
                   const p = await getProfile()
@@ -165,54 +167,14 @@ const Popup: React.FC = () => {
   return (
     <div className={`flex flex-col h-[600px] w-[400px] relative overflow-hidden ${isDarkMode ? "bg-[#282a36]" : "bg-white"}`}>
       {/* Header */}
-      <header className={`flex justify-between items-center p-4 ${isDarkMode ? "bg-[#282a36] text-[#f8f8f2]" : "bg-white text-[#1a1a1a]"} z-10`}>
-        <div className="flex items-center">
-          <h1 
-            className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#ff79c6] to-[#bd93f9] transition-all duration-300"
-          >
-            AutoFill Arena
-          </h1>
-          {profile && (
-            <div className="ml-2 flex items-center">
-              {profile.avatar_url && (
-                <img
-                  src={profile.avatar_url || "/placeholder.svg"}
-                  alt={profile.full_name || ""}
-                  className="w-6 h-6 rounded-full ml-2 border border-[#44475a]"
-                />
-              )}
-            </div>
-          )}
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleDarkMode}
-            aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
-            className={`${isDarkMode ? "text-[#f8f8f2] hover:bg-[#44475a]" : "text-[#1a1a1a] hover:bg-gray-100"} transition-all duration-300`}
-          >
-            {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleLogout}
-            aria-label="Log out"
-            className={`${isDarkMode ? "text-[#f8f8f2] hover:bg-[#44475a]" : "text-[#1a1a1a] hover:bg-gray-100"} transition-all duration-300`}
-          >
-            <LogOut className="h-5 w-5" />
-          </Button>
-          <animated.button
-            style={iconAnimation}
-            className={`p-2 rounded-full ${isDarkMode ? "hover:bg-[#44475a] text-[#f8f8f2]" : "hover:bg-gray-100 text-[#1a1a1a]"} transition-all duration-300`}
-            onClick={toggleSettings}
-            aria-label="Settings"
-          >
-            <SettingsIcon className="h-5 w-5" />
-          </animated.button>
-        </div>
-      </header>
+      <PopupHeader
+        isDarkMode={isDarkMode}
+        profile={profile}
+        iconAnimation={iconAnimation}
+        onToggleDark={toggleDarkMode}
+        onLogout={handleLogout}
+        onToggleSettings={toggleSettings}
+      />
 
       {/* Main content */}
       <main className={`flex-grow p-4 overflow-y-auto ${isDarkMode ? "bg-[#282a36] text-[#f8f8f2]" : "bg-white text-[#1a1a1a]"}`}>
@@ -220,46 +182,7 @@ const Popup: React.FC = () => {
       </main>
 
       {/* Footer */}
-      <footer className={`flex w-full ${isDarkMode ? "bg-[#282a36]" : "bg-white"} z-10`}>
-        <Button
-          variant="ghost"
-          className={`flex flex-1 flex-col items-center h-auto py-4 rounded-none transition-all duration-300 ${
-            currentPage === "autofill"
-              ? isDarkMode
-                ? "bg-gradient-to-r from-[#bd93f9]/20 to-[#bd93f9]/10 text-[#bd93f9] shadow-[0_0_10px_rgba(189,147,249,0.2)]"
-                : "bg-gradient-to-r from-purple-100 to-purple-50 text-purple-600 shadow-sm"
-              : isDarkMode
-                ? "text-[#6272a4] hover:text-[#f8f8f2] hover:bg-[#44475a]/50"
-                : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
-          }`}
-          onClick={() => setCurrentPage("autofill")}
-          aria-label="Autofill"
-        >
-          <FileText className={`h-5 w-5 mb-1 transition-all duration-300 ${
-            currentPage === "autofill" ? "transform scale-110" : ""
-          }`} />
-          <span className="text-xs font-medium">Autofill</span>
-        </Button>
-        <Button
-          variant="ghost"
-          className={`flex flex-1 flex-col items-center h-auto py-4 rounded-none transition-all duration-300 ${
-            currentPage === "profile"
-              ? isDarkMode
-                ? "bg-gradient-to-r from-[#bd93f9]/20 to-[#bd93f9]/10 text-[#bd93f9] shadow-[0_0_10px_rgba(189,147,249,0.2)]"
-                : "bg-gradient-to-r from-purple-100 to-purple-50 text-purple-600 shadow-sm"
-              : isDarkMode
-                ? "text-[#6272a4] hover:text-[#f8f8f2] hover:bg-[#44475a]/50"
-                : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
-          }`}
-          onClick={() => setCurrentPage("profile")}
-          aria-label="Profile"
-        >
-          <User className={`h-5 w-5 mb-1 transition-all duration-300 ${
-            currentPage === "profile" ? "transform scale-110" : ""
-          }`} />
-          <span className="text-xs font-medium">Profile</span>
-        </Button>
-      </footer>
+      <BottomNav isDarkMode={isDarkMode} currentPage={currentPage} onNavigate={setCurrentPage} />
 
       {/* Settings Panel */}
       <animated.div

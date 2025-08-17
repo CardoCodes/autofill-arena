@@ -10,14 +10,18 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { SectionCard } from "../components/profile/SectionCard"
+import { PersonalInfoForm } from "../components/profile/PersonalInfoForm"
+import { EditableList } from "../components/profile/EditableList"
 
 interface ProfilePageProps {
   user: any
   profile: ProfileWithDetails | null
   onProfileUpdate: (profile: any) => Promise<void>
+  isDarkMode: boolean
 }
 
-const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdate }) => {
+const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdate, isDarkMode }) => {
   const [fullName, setFullName] = useState("")
   const [phone, setPhone] = useState("")
   const [location, setLocation] = useState("")
@@ -230,7 +234,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdat
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-[#f8f8f2]">Profile</h2>
+        <h2 className="text-2xl font-bold">Profile</h2>
         {saveMessage && (
           <div className={`text-sm ${saveMessage.includes("Error") ? "text-[#ff5555]" : "text-[#50fa7b]"}`}>
             {saveMessage}
@@ -239,327 +243,71 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdat
       </div>
 
       {/* Personal Information */}
-      <Card className="bg-[#44475a] border-0 shadow-none">
-        <CardHeader>
-          <CardTitle className="text-[#f8f8f2]">Personal Information</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="fullName" className="text-[#f8f8f2]">Full Name</Label>
-            <Input
-              type="text"
-              id="fullName"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              className="bg-[#282a36] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email" className="text-[#f8f8f2]">Email</Label>
-            <Input
-              type="email"
-              id="email"
-              value={user?.email || ""}
-              disabled
-              className="bg-[#282a36] border-[#6272a4] text-[#6272a4]"
-            />
-            <p className="text-xs text-[#6272a4]">Email cannot be changed</p>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="phone" className="text-[#f8f8f2]">Phone</Label>
-            <Input
-              type="tel"
-              id="phone"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className="bg-[#282a36] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="location" className="text-[#f8f8f2]">Location</Label>
-            <Input
-              type="text"
-              id="location"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              className="bg-[#282a36] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
-            />
-          </div>
-        </CardContent>
-      </Card>
+      <SectionCard title="Personal Information" isDarkMode={isDarkMode}>
+        <PersonalInfoForm
+          fullName={fullName}
+          email={user?.email || ""}
+          phone={phone}
+          location={location}
+          onChange={(field, value) => {
+            if (field === 'fullName') setFullName(value)
+            if (field === 'phone') setPhone(value)
+            if (field === 'location') setLocation(value)
+          }}
+        />
+      </SectionCard>
 
       {/* Job History */}
-      <Card className="bg-[#44475a] border-0 shadow-none">
-        <CardHeader className="flex flex-row justify-between items-center">
-          <CardTitle className="text-[#f8f8f2]">Job History</CardTitle>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => addItem(setJobHistory, jobHistory, "job")}
-            className="bg-[#282a36] border-[#6272a4] text-[#f8f8f2] hover:bg-[#44475a] hover:text-[#50fa7b] transition-all duration-300"
-          >
+      <SectionCard
+        title="Job History"
+        isDarkMode={isDarkMode}
+        headerRight={(
+          <Button variant="outline" size="icon" onClick={() => addItem(setJobHistory, jobHistory, "job")}>
             <Plus className="h-4 w-4" />
           </Button>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {jobHistory.map((job, index) => (
-            <div key={job.id} className="space-y-4 p-4 bg-[#282a36] rounded-lg relative group">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => removeItem(setJobHistory, jobHistory, job.id, "job")}
-                className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 text-[#ff5555] hover:text-[#ff5555] hover:bg-[#44475a] transition-all duration-300"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-              <div className="space-y-2">
-                <Label className="text-[#f8f8f2]">Company</Label>
-                <Input
-                  value={job.company}
-                  onChange={(e) => {
-                    const updatedJobs = [...jobHistory]
-                    updatedJobs[index].company = e.target.value
-                    setJobHistory(updatedJobs)
-                  }}
-                  className="bg-[#44475a] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-[#f8f8f2]">Position</Label>
-                <Input
-                  value={job.position}
-                  onChange={(e) => {
-                    const updatedJobs = [...jobHistory]
-                    updatedJobs[index].position = e.target.value
-                    setJobHistory(updatedJobs)
-                  }}
-                  className="bg-[#44475a] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="text-[#f8f8f2]">Start Date</Label>
-                  <Input
-                    type="date"
-                    value={job.start_date}
-                    onChange={(e) => {
-                      const updatedJobs = [...jobHistory]
-                      updatedJobs[index].start_date = e.target.value
-                      setJobHistory(updatedJobs)
-                    }}
-                    className="bg-[#44475a] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-[#f8f8f2]">End Date</Label>
-                  <Input
-                    type="date"
-                    value={job.end_date}
-                    onChange={(e) => {
-                      const updatedJobs = [...jobHistory]
-                      updatedJobs[index].end_date = e.target.value
-                      setJobHistory(updatedJobs)
-                    }}
-                    className="bg-[#44475a] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label className="text-[#f8f8f2]">Description</Label>
-                <Textarea
-                  value={job.description}
-                  onChange={(e) => {
-                    const updatedJobs = [...jobHistory]
-                    updatedJobs[index].description = e.target.value
-                    setJobHistory(updatedJobs)
-                  }}
-                  className="bg-[#44475a] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300 min-h-[100px]"
-                />
-              </div>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
+        )}
+      >
+        <EditableList
+          items={jobHistory as any}
+          kind="job"
+          isDarkMode={isDarkMode}
+          onChange={(next: any[]) => setJobHistory(next)}
+          onRemove={(id: string) => removeItem(setJobHistory, jobHistory, id, "job")}
+          onAdd={() => addItem(setJobHistory, jobHistory, "job")}
+        />
+      </SectionCard>
 
       {/* Skills */}
-      <Card className="bg-[#44475a] border-0 shadow-none">
-        <CardHeader>
-          <CardTitle className="text-[#f8f8f2]">Skills</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <Label htmlFor="skills" className="text-[#f8f8f2]">List your skills (comma-separated)</Label>
-            <Input
-              type="text"
-              id="skills"
-              value={skills}
-              onChange={(e) => setSkills(e.target.value)}
-              placeholder="e.g. JavaScript, React, Node.js"
-              className="bg-[#282a36] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
-            />
-          </div>
-        </CardContent>
-      </Card>
+      <SectionCard title="Skills" isDarkMode={isDarkMode}>
+        <div className="space-y-2">
+          <Label htmlFor="skills">List your skills (comma-separated)</Label>
+          <Input id="skills" value={skills} onChange={(e) => setSkills(e.target.value)} placeholder="e.g. JavaScript, React, Node.js" className="bg-transparent" />
+        </div>
+      </SectionCard>
 
       {/* Projects */}
-      <Card className="bg-[#44475a] border-0 shadow-none">
-        <CardHeader>
-          <CardTitle className="text-[#f8f8f2]">Projects</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {projects.map((project, index) => (
-            <div key={project.id} className="p-4 bg-[#282a36] rounded-lg border-0 space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor={`projectName-${project.id}`} className="text-[#f8f8f2]">Project Name</Label>
-                <Input
-                  type="text"
-                  id={`projectName-${project.id}`}
-                  value={project.name || ""}
-                  onChange={(e) => {
-                    const updatedProjects = [...projects]
-                    updatedProjects[index].name = e.target.value
-                    setProjects(updatedProjects)
-                  }}
-                  className="bg-[#282a36] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor={`projectDescription-${project.id}`} className="text-[#f8f8f2]">Description</Label>
-                <Textarea
-                  id={`projectDescription-${project.id}`}
-                  value={project.description || ""}
-                  onChange={(e) => {
-                    const updatedProjects = [...projects]
-                    updatedProjects[index].description = e.target.value
-                    setProjects(updatedProjects)
-                  }}
-                  rows={3}
-                  className="bg-[#282a36] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor={`projectTechnologies-${project.id}`} className="text-[#f8f8f2]">Technologies Used</Label>
-                <Input
-                  type="text"
-                  id={`projectTechnologies-${project.id}`}
-                  value={project.technologies || ""}
-                  onChange={(e) => {
-                    const updatedProjects = [...projects]
-                    updatedProjects[index].technologies = e.target.value
-                    setProjects(updatedProjects)
-                  }}
-                  className="bg-[#282a36] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
-                />
-              </div>
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={() => removeItem(setProjects, projects, project.id, "project")}
-                className="mt-2 bg-[#ff5555] hover:bg-[#ff5555]/90 text-[#f8f8f2]"
-              >
-                <Trash2 size={16} className="mr-1" />
-                Remove
-              </Button>
-            </div>
-          ))}
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => addItem(setProjects, projects, "project")}
-            className="bg-[#282a36] border-[#6272a4] text-[#f8f8f2] hover:bg-[#44475a] hover:text-[#50fa7b] transition-all duration-300"
-          >
-            <Plus size={16} className="mr-1" />
-            Add Project
-          </Button>
-        </CardContent>
-      </Card>
+      <SectionCard title="Projects" isDarkMode={isDarkMode}>
+        <EditableList
+          items={projects as any}
+          kind="project"
+          isDarkMode={isDarkMode}
+          onChange={(next: any[]) => setProjects(next)}
+          onRemove={(id: string) => removeItem(setProjects, projects, id, "project")}
+          onAdd={() => addItem(setProjects, projects, "project")}
+        />
+      </SectionCard>
 
       {/* Education */}
-      <Card className="bg-[#44475a] border-0 shadow-none">
-        <CardHeader>
-          <CardTitle className="text-[#f8f8f2]">Education</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {education.map((edu, index) => (
-            <div key={edu.id} className="p-4 bg-[#282a36] rounded-lg border-0 space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor={`school-${edu.id}`} className="text-[#f8f8f2]">School</Label>
-                <Input
-                  type="text"
-                  id={`school-${edu.id}`}
-                  value={edu.school || ""}
-                  onChange={(e) => {
-                    const updatedEducation = [...education]
-                    updatedEducation[index].school = e.target.value
-                    setEducation(updatedEducation)
-                  }}
-                  className="bg-[#282a36] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor={`degree-${edu.id}`} className="text-[#f8f8f2]">Degree</Label>
-                <Input
-                  type="text"
-                  id={`degree-${edu.id}`}
-                  value={edu.degree || ""}
-                  onChange={(e) => {
-                    const updatedEducation = [...education]
-                    updatedEducation[index].degree = e.target.value
-                    setEducation(updatedEducation)
-                  }}
-                  className="bg-[#282a36] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor={`fieldOfStudy-${edu.id}`} className="text-[#f8f8f2]">Field of Study</Label>
-                <Input
-                  type="text"
-                  id={`fieldOfStudy-${edu.id}`}
-                  value={edu.field_of_study || ""}
-                  onChange={(e) => {
-                    const updatedEducation = [...education]
-                    updatedEducation[index].field_of_study = e.target.value
-                    setEducation(updatedEducation)
-                  }}
-                  className="bg-[#282a36] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor={`graduationDate-${edu.id}`} className="text-[#f8f8f2]">Graduation Date</Label>
-                <Input
-                  type="date"
-                  id={`graduationDate-${edu.id}`}
-                  value={edu.graduation_date || ""}
-                  onChange={(e) => {
-                    const updatedEducation = [...education]
-                    updatedEducation[index].graduation_date = e.target.value
-                    setEducation(updatedEducation)
-                  }}
-                  className="bg-[#282a36] border-[#6272a4] text-[#f8f8f2] focus:ring-[#bd93f9] hover:border-[#bd93f9] transition-all duration-300"
-                />
-              </div>
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={() => removeItem(setEducation, education, edu.id, "education")}
-                className="mt-2 bg-[#ff5555] hover:bg-[#ff5555]/90 text-[#f8f8f2]"
-              >
-                <Trash2 size={16} className="mr-1" />
-                Remove
-              </Button>
-            </div>
-          ))}
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => addItem(setEducation, education, "education")}
-            className="bg-[#282a36] border-[#6272a4] text-[#f8f8f2] hover:bg-[#44475a] hover:text-[#50fa7b] transition-all duration-300"
-          >
-            <Plus size={16} className="mr-1" />
-            Add Education
-          </Button>
-        </CardContent>
-      </Card>
+      <SectionCard title="Education" isDarkMode={isDarkMode}>
+        <EditableList
+          items={education as any}
+          kind="education"
+          isDarkMode={isDarkMode}
+          onChange={(next: any[]) => setEducation(next)}
+          onRemove={(id: string) => removeItem(setEducation, education, id, "education")}
+          onAdd={() => addItem(setEducation, education, "education")}
+        />
+      </SectionCard>
 
       {/* Save Button */}
       <Button
