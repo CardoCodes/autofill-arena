@@ -73,8 +73,8 @@ const AutofillPage: React.FC<Props> = ({ isDarkMode = true }) => {
           <CardDescription className={`${isDarkMode ? "text-[#6272a4]" : "text-gray-500"}`}>{currentUrl}</CardDescription>
           <p className={`text-sm ${isDarkMode ? "text-[#6272a4]" : "text-gray-500"}`}>{statusMessage}</p>
         </CardHeader>
-        <CardContent className="flex justify-center">
-          <div className="flex flex-col items-center gap-2">
+        <CardContent className="flex justify-center pt-6">
+          <div className="flex flex-col items-center gap-3">
             <AutofillStatusButton status={status} onClick={handleAutofill} isDarkMode={isDarkMode} />
             <span className={`font-semibold ${isDarkMode ? "text-[#f8f8f2]" : "text-[#1a1a1a]"}`}>{getButtonText()}</span>
           </div>
