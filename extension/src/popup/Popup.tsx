@@ -10,7 +10,7 @@ import AutofillPage from "./pages/AutofillPage"
 import LandingGate from "./LandingGate"
 import SettingsPage from "./pages/SettingsPage"
 import LandingPage from "./pages/LandingPage"
-import { getProfile, saveProfile, getAnswers, saveAnswers } from "../services/localProfile"
+import { getProfile, saveProfile, getAnswers, saveAnswers, signOutLocal } from "../services/localProfile"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { PopupHeader } from "./components/layout/PopupHeader"
@@ -108,10 +108,10 @@ const Popup: React.FC = () => {
 
   const handleLogout = async () => {
     try {
+      await signOutLocal()
       setUser(null)
       setProfile(null)
       setCurrentPage("autofill")
-      // Close settings if open
       setIsSettingsOpen(false)
     } catch (error) {
       console.error("Error signing out:", error)
@@ -159,7 +159,7 @@ const Popup: React.FC = () => {
   if (!user) {
     return (
       <div className={`h-[600px] w-[400px] ${isDarkMode ? "bg-[#282a36]" : "bg-white"}`}>
-        <LandingGate />
+        <LandingPage onAuthStateChange={handleAuthStateChange} />
       </div>
     )
   }
