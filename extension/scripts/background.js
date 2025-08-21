@@ -1,5 +1,4 @@
 const API_BASE = 'http://localhost:5123'
-let panelWindowId = null
 
 try {
   chrome.runtime.onInstalled.addListener(() => {
@@ -10,84 +9,56 @@ try {
 const actionApi = (chrome.action && chrome.action.onClicked) ? chrome.action : (chrome.browserAction || null)
 if (actionApi && actionApi.onClicked) {
   actionApi.onClicked.addListener(() => {
-    openOrFocusPanel()
-  })
-}
-
-function openOrFocusPanel() {
-  if (panelWindowId !== null) {
     try {
-      chrome.windows.update(panelWindowId, { focused: true }, (win) => {
-        if (chrome.runtime.lastError || !win) {
-          lookupExistingOrCreate()
-        }
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        const tab = tabs && tabs[0]
+        if (!tab || tab.id == null) return
+
+        chrome.tabs.sendMessage(tab.id, { action: 'toggleOverlay' }, () => {
+          if (chrome.runtime.lastError) {
+            // No receiver: inject content and CSS, then retry
+            injectOverlayBundle(tab.id)
+          }
+        })
       })
     } catch (e) {
-      lookupExistingOrCreate()
-    }
-    return
-  }
-  lookupExistingOrCreate()
-}
-
-function createPanelWindow() {
-  chrome.windows.create({
-    url: 'popup.html',
-    type: 'popup',
-    width: 420,
-    height: 640,
-    focused: true
-  }, (win) => {
-    if (win && typeof win.id === 'number') {
-      panelWindowId = win.id
+      console.warn('toggleOverlay send failed', e)
     }
   })
 }
 
-function lookupExistingOrCreate() {
-  const targetUrl = chrome.runtime.getURL('popup.html')
+function injectOverlayBundle(tabId) {
   try {
-    chrome.windows.getAll({ populate: true }, (wins) => {
-      if (!wins || wins.length === 0) {
-        createPanelWindow()
-        return
+    if (chrome.scripting && chrome.scripting.executeScript) {
+      // MV3 path
+      const applyMessage = () => chrome.tabs.sendMessage(tabId, { action: 'toggleOverlay' })
+      const injectScript = () => chrome.scripting.executeScript({ target: { tabId }, files: ['scripts/content.js'] }, applyMessage)
+      if (chrome.scripting.insertCSS) {
+        chrome.scripting.insertCSS({ target: { tabId }, files: ['scripts/styles.css'] }, injectScript)
+      } else {
+        injectScript()
       }
-      for (const w of wins) {
-        if (w.tabs) {
-          for (const t of w.tabs) {
-            if (t.url === targetUrl) {
-              panelWindowId = w.id || null
-              if (panelWindowId !== null) {
-                chrome.windows.update(panelWindowId, { focused: true })
-                return
-              }
-            }
-          }
-        }
+    } else {
+      // MV2 path (Firefox)
+      const injectScript = () => chrome.tabs.executeScript(tabId, { file: 'scripts/content.js' }, () => chrome.tabs.sendMessage(tabId, { action: 'toggleOverlay' }))
+      if (chrome.tabs.insertCSS) {
+        chrome.tabs.insertCSS(tabId, { file: 'scripts/styles.css' }, injectScript)
+      } else {
+        injectScript()
       }
-      createPanelWindow()
-    })
+    }
   } catch (e) {
-    createPanelWindow()
+    console.warn('overlay bundle injection failed', e)
   }
 }
 
-try {
-  chrome.windows.onRemoved.addListener((windowId) => {
-    if (panelWindowId === windowId) {
-      panelWindowId = null
-    }
-  })
-} catch {}
+// Remove legacy popup window handling
 
 // Relay messages if needed
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message?.type === 'getApiBase') {
     sendResponse({ apiBase: API_BASE })
   }
-  if (message?.type === 'openPanel') {
-    openOrFocusPanel()
-    sendResponse({ ok: true })
-  }
+  // no-op: no more openPanel; overlay is toggled via action click
 })
 

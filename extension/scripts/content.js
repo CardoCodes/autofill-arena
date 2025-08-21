@@ -1,36 +1,133 @@
 ;(() => {
-  const UI_ID = 'ai-job-assistant-root'
+  const OVERLAY_ID = 'autofill-arena-overlay'
+  const HEADER_ID = 'autofill-arena-header'
+  const CLOSE_ID = 'autofill-arena-close-btn'
   const API_DEFAULT = 'http://localhost:5123'
 
-  function ensureUi() {
-    let el = document.getElementById(UI_ID)
-    if (!el) {
-      el = document.createElement('div')
-      el.id = UI_ID
-      el.style.position = 'fixed'
-      el.style.top = '12px'
-      el.style.right = '12px'
-      el.style.zIndex = '2147483647'
-      el.style.background = 'white'
-      el.style.border = '1px solid #ddd'
-      el.style.boxShadow = '0 8px 24px rgba(0,0,0,0.12)'
-      el.style.borderRadius = '8px'
-      el.style.padding = '12px'
-      el.style.fontFamily = 'system-ui, sans-serif'
-      el.style.fontSize = '12px'
-      document.body.appendChild(el)
+  function createOverlay() {
+    if (document.getElementById(OVERLAY_ID)) return document.getElementById(OVERLAY_ID)
+
+    const container = document.createElement('div')
+    container.id = OVERLAY_ID
+    container.className = 'autofill-overlay'
+    container.style.position = 'fixed'
+    container.style.top = '80px'
+    container.style.left = '80px'
+    container.style.zIndex = '999999'
+    container.style.width = '420px'
+    container.style.height = '640px'
+    container.style.background = 'white'
+    container.style.border = '1px solid #e5e7eb'
+    container.style.borderRadius = '10px'
+    container.style.boxShadow = '0 10px 30px rgba(0,0,0,0.2)'
+    container.style.userSelect = 'none'
+    container.style.display = 'flex'
+    container.style.flexDirection = 'column'
+    container.style.overflow = 'hidden'
+    container.style.boxSizing = 'border-box'
+
+    const header = document.createElement('div')
+    header.id = HEADER_ID
+    header.textContent = 'AutoFill Arena'
+    header.style.cursor = 'move'
+    header.style.padding = '10px 14px'
+    header.style.fontFamily = 'system-ui, -apple-system, Segoe UI, Roboto, sans-serif'
+    header.style.fontSize = '14px'
+    header.style.fontWeight = '600'
+    header.style.background = '#111827'
+    header.style.color = 'white'
+    header.style.borderTopLeftRadius = '10px'
+    header.style.borderTopRightRadius = '10px'
+    header.style.position = 'relative'
+
+    const close = document.createElement('button')
+    close.id = CLOSE_ID
+    close.textContent = '✕'
+    close.setAttribute('aria-label', 'Close')
+    close.style.position = 'absolute'
+    close.style.top = '6px'
+    close.style.right = '8px'
+    close.style.width = '28px'
+    close.style.height = '28px'
+    close.style.border = 'none'
+    close.style.borderRadius = '6px'
+    close.style.background = 'transparent'
+    close.style.color = 'white'
+    close.style.cursor = 'pointer'
+
+    const body = document.createElement('div')
+    body.style.flex = '1 1 auto'
+    body.style.padding = '0'
+    body.style.fontFamily = 'system-ui, -apple-system, Segoe UI, Roboto, sans-serif'
+    body.style.fontSize = '13px'
+    body.style.overflow = 'hidden'
+    body.style.boxSizing = 'border-box'
+
+    const iframe = document.createElement('iframe')
+    try {
+      iframe.src = chrome.runtime.getURL('popup.html')
+    } catch {
+      iframe.src = 'popup.html'
     }
-    return el
+    iframe.style.width = '100%'
+    iframe.style.height = '100%'
+    iframe.style.border = '0'
+    iframe.style.display = 'block'
+    iframe.setAttribute('title', 'AutoFill Arena')
+
+    header.appendChild(close)
+    container.appendChild(header)
+    container.appendChild(body)
+    body.appendChild(iframe)
+    document.documentElement.appendChild(container)
+
+    enableDragging(container, header)
+    close.addEventListener('click', () => container.remove())
+    return container
   }
 
-  function setUi(text) {
-    const ui = ensureUi()
-    ui.textContent = text
+  function toggleOverlay() {
+    const existing = document.getElementById(OVERLAY_ID)
+    if (existing) {
+      existing.remove()
+      return
+    }
+    createOverlay()
   }
 
-  function removeUi() {
-    const ui = document.getElementById(UI_ID)
-    if (ui) ui.remove()
+  function enableDragging(container, handle) {
+    let isDragging = false
+    let startMouseX = 0
+    let startMouseY = 0
+    let startLeft = 0
+    let startTop = 0
+
+    const onMouseDown = (e) => {
+      isDragging = true
+      startMouseX = e.clientX
+      startMouseY = e.clientY
+      const rect = container.getBoundingClientRect()
+      startLeft = rect.left
+      startTop = rect.top
+      document.addEventListener('mousemove', onMouseMove)
+      document.addEventListener('mouseup', onMouseUp)
+    }
+
+    const onMouseMove = (e) => {
+      if (!isDragging) return
+      const dx = e.clientX - startMouseX
+      const dy = e.clientY - startMouseY
+      container.style.left = `${Math.max(0, startLeft + dx)}px`
+      container.style.top = `${Math.max(0, startTop + dy)}px`
+    }
+
+    const onMouseUp = () => {
+      isDragging = false
+      document.removeEventListener('mousemove', onMouseMove)
+      document.removeEventListener('mouseup', onMouseUp)
+    }
+
+    handle.addEventListener('mousedown', onMouseDown)
   }
 
   function extractFields() {
@@ -98,12 +195,14 @@
   }
 
   async function planAndFill() {
-    setUi('Scanning form...')
+    const overlay = createOverlay()
+    const body = overlay.querySelector('div:nth-child(2)')
+    if (body) body.textContent = 'Scanning form...'
     const apiBase = await getApiBase()
     const url = location.href
     const fields = extractFields()
     try {
-      setUi('Planning fill...')
+      if (body) body.textContent = 'Planning fill...'
       const planResp = await fetch(`${apiBase}/fill/plan`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -124,15 +223,15 @@
         }
       }
       if (plan.unknown_fields?.length) {
-        setUi(`Filled ${filled}. Needs input for ${plan.unknown_fields.length} fields.`)
+        if (body) body.textContent = `Filled ${filled}. Needs input for ${plan.unknown_fields.length} fields.`
         await promptLearn(plan, apiBase)
       } else {
-        setUi(`Filled ${filled} fields.`)
-        setTimeout(removeUi, 1500)
+        if (body) body.textContent = `Filled ${filled} fields.`
+        setTimeout(() => overlay.remove(), 1500)
       }
     } catch (e) {
       console.error(e)
-      setUi('Autofill failed. See console.')
+      if (body) body.textContent = 'Autofill failed. See console.'
     }
   }
 
@@ -201,6 +300,9 @@
   chrome.runtime.onMessage.addListener((request) => {
     if (request.action === 'scanAndFill') {
       planAndFill()
+    }
+    if (request.action === 'toggleOverlay') {
+      toggleOverlay()
     }
   })
 

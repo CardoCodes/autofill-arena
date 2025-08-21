@@ -6,7 +6,8 @@
   "permissions": [
     "storage",
     "activeTab",
-    "tabs"
+    "tabs",
+    "scripting"
   ],
   "host_permissions": [
     "http://localhost:5123/*",
@@ -23,6 +24,7 @@
     {
       "matches": ["<all_urls>"],
       "js": ["scripts/content.js"],
+      "css": ["scripts/styles.css"],
       "run_at": "document_end"
     }
   ],

@@ -20,6 +20,7 @@
     {
       "matches": ["<all_urls>"],
       "js": ["scripts/content.js"],
+      "css": ["scripts/styles.css"],
       "run_at": "document_end"
     }
   ],
