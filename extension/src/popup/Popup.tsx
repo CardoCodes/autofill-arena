@@ -150,7 +150,7 @@ const Popup: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-[600px] w-[400px] bg-[#282a36]">
+      <div className="flex items-center justify-center h-[600px] w-full bg-[#282a36]">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#ff79c6]"></div>
       </div>
     )
@@ -158,14 +158,14 @@ const Popup: React.FC = () => {
 
   if (!user) {
     return (
-      <div className={`h-[600px] w-[400px] ${isDarkMode ? "bg-[#282a36]" : "bg-white"}`}>
+      <div className={`h-[600px] w-full ${isDarkMode ? "bg-[#282a36]" : "bg-white"}`}>
         <LandingPage onAuthStateChange={handleAuthStateChange} />
       </div>
     )
   }
 
   return (
-    <div className={`flex flex-col h-[600px] w-[400px] relative overflow-hidden ${isDarkMode ? "bg-[#282a36]" : "bg-white"}`}>
+    <div className={`flex flex-col h-[600px] w-full relative overflow-hidden ${isDarkMode ? "bg-[#282a36]" : "bg-white"}`}>
       {/* Header */}
       <PopupHeader
         isDarkMode={isDarkMode}
