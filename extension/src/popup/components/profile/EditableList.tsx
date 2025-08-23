@@ -47,12 +47,12 @@ export function EditableList(props: EditableListProps) {
   return (
     <div className="space-y-4">
       {props.items.map((item, index) => (
-        <div key={item.id} className={`p-4 ${isDarkMode ? "bg-[#282a36]" : "bg-white"} rounded-lg relative group space-y-4`}>
+        <div key={item.id} className={`p-4 ${isDarkMode ? "bg-[#282a36] text-[#f8f8f2]" : "bg-white text-[#1a1a1a]"} rounded-lg relative group space-y-4`}>
           <Button
             variant="ghost"
             size="icon"
             onClick={() => onRemove(item.id)}
-            className={`absolute right-2 top-2 opacity-0 group-hover:opacity-100 text-[#ff5555] ${isDarkMode ? "hover:bg-[#44475a]" : "hover:bg-gray-100"}`}
+            className={`absolute right-2 top-2 opacity-0 group-hover:opacity-100 text-[#ff5555] ${isDarkMode ? "hover:bg-[#44475a] text-[#f8f8f2]" : "hover:bg-gray-100 text-[#1a1a1a]"}`}
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -62,7 +62,16 @@ export function EditableList(props: EditableListProps) {
           {props.kind === 'education' && renderEducation(props.items[index] as EducationItem, index)}
         </div>
       ))}
-      <Button variant="outline" size="sm" onClick={onAdd}>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={onAdd}
+        className={`transition-all duration-300 ${
+          isDarkMode
+            ? "text-[#f8f8f2] border-[#44475a] bg-[#282a36] hover:bg-[#44475a]"
+            : "text-[#1a1a1a] border-gray-300 bg-white hover:bg-gray-100"
+        }`}
+      >
         <Plus size={16} className="mr-1" /> Add
       </Button>
     </div>

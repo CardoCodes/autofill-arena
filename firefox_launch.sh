@@ -13,6 +13,7 @@ set -Eeuo pipefail
 # - SKIP_BACKEND_INSTALL=1    Do not install backend deps (use existing node_modules)
 # - SKIP_EXTENSION_INSTALL=1  Do not install extension deps (use existing node_modules)
 # - FIREFOX_BIN=...</path>    Use a specific Firefox executable (useful on Windows Git Bash)
+# - START_URL=...</url>        Open this URL when Firefox starts (defaults to Wikipedia)
 # -------------------------------------------------------------
 
 # Optional: set FIREFOX_BIN to a specific Firefox path (e.g., on Windows Git Bash)
@@ -215,6 +216,13 @@ echo "==> Launching Firefox with temporary add-on (web-ext)..."
 WEB_EXT_ARGS=(run --source-dir out)
 if [[ -n "${FIREFOX_BIN:-}" ]]; then
   WEB_EXT_ARGS+=(--firefox "$FIREFOX_BIN")
+fi
+
+# Optionally open a URL on startup (defaults to Wikipedia)
+if [[ -n "${START_URL:-}" ]]; then
+  WEB_EXT_ARGS+=(--url "$START_URL")
+else
+  WEB_EXT_ARGS+=(--url "https://www.wikipedia.org/")
 fi
 
 # Use --yes to avoid npx prompt on first run

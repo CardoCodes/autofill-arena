@@ -14,3 +14,5 @@ extension/.next
 node_modules/
 /extension/_next/
 /extension/out/
+.db
+backend/autofill-arena.db

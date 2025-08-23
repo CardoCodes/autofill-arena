@@ -10,7 +10,7 @@ import AutofillPage from "./pages/AutofillPage"
 import LandingGate from "./LandingGate"
 import SettingsPage from "./pages/SettingsPage"
 import LandingPage from "./pages/LandingPage"
-import { getProfile, saveProfile, getAnswers, saveAnswers } from "../services/localProfile"
+import { getProfile, saveProfile, getAnswers, saveAnswers, signOutLocal } from "../services/localProfile"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { PopupHeader } from "./components/layout/PopupHeader"
@@ -108,10 +108,10 @@ const Popup: React.FC = () => {
 
   const handleLogout = async () => {
     try {
+      await signOutLocal()
       setUser(null)
       setProfile(null)
       setCurrentPage("autofill")
-      // Close settings if open
       setIsSettingsOpen(false)
     } catch (error) {
       console.error("Error signing out:", error)
@@ -121,7 +121,7 @@ const Popup: React.FC = () => {
   const renderPage = () => {
     switch (currentPage) {
       case "autofill":
-        return <AutofillPage />
+        return <AutofillPage isDarkMode={isDarkMode} />
       case "profile":
         return (
               <ProfilePage
@@ -150,7 +150,7 @@ const Popup: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-[600px] w-[400px] bg-[#282a36]">
+      <div className="flex items-center justify-center h-[600px] w-full bg-[#282a36]">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#ff79c6]"></div>
       </div>
     )
@@ -158,14 +158,14 @@ const Popup: React.FC = () => {
 
   if (!user) {
     return (
-      <div className={`h-[600px] w-[400px] ${isDarkMode ? "bg-[#282a36]" : "bg-white"}`}>
-        <LandingGate />
+      <div className={`h-[600px] w-full ${isDarkMode ? "bg-[#282a36]" : "bg-white"}`}>
+        <LandingPage onAuthStateChange={handleAuthStateChange} />
       </div>
     )
   }
 
   return (
-    <div className={`flex flex-col h-[600px] w-[400px] relative overflow-hidden ${isDarkMode ? "bg-[#282a36]" : "bg-white"}`}>
+    <div className={`flex flex-col h-[600px] w-full relative overflow-hidden ${isDarkMode ? "bg-[#282a36]" : "bg-white"}`}>
       {/* Header */}
       <PopupHeader
         isDarkMode={isDarkMode}

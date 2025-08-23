@@ -5,7 +5,9 @@
   "description": "AI-powered job application autofill assistant",
   "permissions": [
     "storage",
-    "activeTab"
+    "activeTab",
+    "tabs",
+    "scripting"
   ],
   "host_permissions": [
     "http://localhost:5123/*",
@@ -13,7 +15,7 @@
     "https://*.supabase.co/*"
   ],
   "action": {
-    "default_popup": "popup.html"
+    "default_title": "AutoFill Arena"
   },
   "background": {
     "service_worker": "scripts/background.js"
@@ -22,6 +24,7 @@
     {
       "matches": ["<all_urls>"],
       "js": ["scripts/content.js"],
+      "css": ["scripts/styles.css"],
       "run_at": "document_end"
     }
   ],

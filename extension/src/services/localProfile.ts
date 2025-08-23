@@ -41,6 +41,25 @@ async function storageSet(items: Record<string, any>): Promise<void> {
   } catch {}
 }
 
+async function storageRemove(keys: string[] | string): Promise<void> {
+  try {
+    // @ts-ignore
+    if (typeof browser !== 'undefined' && browser.storage?.local?.remove) {
+      // @ts-ignore
+      await browser.storage.local.remove(keys as any)
+      return
+    }
+  } catch {}
+  try {
+    if (typeof chrome !== 'undefined' && chrome.storage?.local?.remove) {
+      await new Promise<void>((resolve) => {
+        chrome.storage.local.remove(keys as any, () => resolve())
+      })
+      return
+    }
+  } catch {}
+}
+
 export type LocalProfile = {
   full_name?: string
   first_name?: string
@@ -105,6 +124,18 @@ export async function saveAnswers(answers: Record<string, string>): Promise<void
   } catch {}
   const current = await getAnswers()
   await storageSet({ [ANSWERS_STORE_KEY]: { ...current, ...answers } })
+}
+
+export async function clearProfile(): Promise<void> {
+  await storageRemove(PROFILE_STORE_KEY)
+}
+
+export async function clearAnswers(): Promise<void> {
+  await storageRemove(ANSWERS_STORE_KEY)
+}
+
+export async function signOutLocal(): Promise<void> {
+  await Promise.all([clearProfile(), clearAnswers()])
 }
 
 

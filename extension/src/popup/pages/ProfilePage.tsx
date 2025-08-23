@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
-import { Plus, Trash2, Save, Loader2 } from "lucide-react"
+import { Save, Loader2 } from "lucide-react"
 import type { ProfileWithDetails } from "../../services/profileService"
 import { profileService } from "../../services/profileService"
 import { Button } from "@/components/ui/button"
@@ -234,9 +234,9 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdat
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Profile</h2>
+        <h2 className={`text-2xl font-bold ${isDarkMode ? "text-[#f8f8f2]" : "text-[#1a1a1a]"}`}>Profile</h2>
         {saveMessage && (
-          <div className={`text-sm ${saveMessage.includes("Error") ? "text-[#ff5555]" : "text-[#50fa7b]"}`}>
+          <div className={`text-sm ${saveMessage.includes("Error") ? "text-[#ff5555]" : isDarkMode ? "text-[#50fa7b]" : "text-green-600"}`}>
             {saveMessage}
           </div>
         )}
@@ -261,11 +261,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdat
       <SectionCard
         title="Job History"
         isDarkMode={isDarkMode}
-        headerRight={(
-          <Button variant="outline" size="icon" onClick={() => addItem(setJobHistory, jobHistory, "job")}>
-            <Plus className="h-4 w-4" />
-          </Button>
-        )}
       >
         <EditableList
           items={jobHistory as any}
@@ -280,7 +275,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdat
       {/* Skills */}
       <SectionCard title="Skills" isDarkMode={isDarkMode}>
         <div className="space-y-2">
-          <Label htmlFor="skills">List your skills (comma-separated)</Label>
+          <Label htmlFor="skills" className={isDarkMode ? "text-[#f8f8f2]" : "text-[#1a1a1a]"}>List your skills (comma-separated)</Label>
           <Input id="skills" value={skills} onChange={(e) => setSkills(e.target.value)} placeholder="e.g. JavaScript, React, Node.js" className="bg-transparent" />
         </div>
       </SectionCard>
@@ -313,7 +308,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, profile, onProfileUpdat
       <Button
         onClick={handleSaveProfile}
         disabled={isSaving}
-        className="w-full bg-[#50fa7b] hover:bg-[#50fa7b]/90 text-[#282a36] transition-all duration-300"
+        className={`w-full transition-all duration-300 ${isDarkMode ? "bg-[#50fa7b] hover:bg-[#50fa7b]/90 text-[#282a36]" : "bg-green-600 hover:bg-green-700 text-white"}`}
       >
         {isSaving ? (
           <>

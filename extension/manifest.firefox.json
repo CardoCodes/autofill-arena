@@ -6,10 +6,10 @@
   "permissions": [
     "storage",
     "activeTab",
-    "<all_urls>"
+    "<all_urls>",
+    "tabs"
   ],
   "browser_action": {
-    "default_popup": "popup.html",
     "default_title": "AutoFill Arena"
   },
   "background": {
@@ -20,6 +20,7 @@
     {
       "matches": ["<all_urls>"],
       "js": ["scripts/content.js"],
+      "css": ["scripts/styles.css"],
       "run_at": "document_end"
     }
   ],
