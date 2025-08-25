@@ -15,32 +15,44 @@ const AutofillPage: React.FC<Props> = ({ isDarkMode = true }) => {
   const [currentUrl, setCurrentUrl] = useState<string>("")
   const [statusMessage, setStatusMessage] = useState<string>("Checking page compatibility...")
 
-  // Simulate checking the current page for autofill compatibility
   useEffect(() => {
-    const checkCurrentPage = async () => {
-      // In a real extension, you would get the current tab URL and check if it's a job application page
-      // For demo purposes, we'll simulate different states
-      setStatus("neutral")
-      setStatusMessage("Checking page compatibility...")
-
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-
-      // Randomly select a status for demonstration
-      const randomStatus = AUTOFILL_STATUS_ORDER[Math.floor(Math.random() * AUTOFILL_STATUS_ORDER.length)]
-
-      setStatus(randomStatus)
-
-      setStatusMessage(AUTOFILL_STATUS_MESSAGES[randomStatus])
-
-      // Simulate getting the current URL
-      setCurrentUrl("https://example.com/jobs/application")
+    const updateFromDetection = async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
+        if (!tab?.id) return
+        setStatus("neutral")
+        setStatusMessage("Checking page compatibility...")
+        const resp = await chrome.tabs.sendMessage(tab.id, { action: 'detectStatus' })
+        if (!resp?.ok) {
+          setStatus("neutral")
+          setStatusMessage("Unable to check this page.")
+          return
+        }
+        setCurrentUrl(resp.url || "")
+        const det = resp.detection
+        // Map backend response to UI status
+        const score = Number(det?.score || 0)
+        const fieldCount = Number(det?.details?.fieldCount || 0)
+        const formCount = Number(det?.details?.formCount || 0)
+        const detected = !!det?.detected
+        let newStatus: AutofillStatus = "neutral"
+        if (!fieldCount && !detected) {
+          newStatus = "not-available"
+        } else if (detected && (formCount >= 1 || score >= 0.6)) {
+          newStatus = "ready"
+        } else {
+          newStatus = "in-progress"
+        }
+        setStatus(newStatus)
+        setStatusMessage(AUTOFILL_STATUS_MESSAGES[newStatus])
+      } catch (e) {
+        setStatus("neutral")
+        setStatusMessage("Unable to check this page.")
+      }
     }
 
-    checkCurrentPage()
-
-    // In a real extension, you would listen for tab changes
-    const intervalId = setInterval(checkCurrentPage, 10000)
+    updateFromDetection()
+    const intervalId = setInterval(updateFromDetection, 10000)
     return () => clearInterval(intervalId)
   }, [])
 

@@ -3,12 +3,10 @@ import cors from 'cors'
 import { z } from 'zod'
 import { Database } from './lib/db.js'
 import { createFillPlan } from './lib/planner.js'
-import detectionRouter from './detection/router.js'
 
 const app = express()
 app.use(cors({ origin: true }))
 app.use(express.json({ limit: '2mb' }))
-app.use('/detect', detectionRouter)
 
 const db = new Database('autofill-arena.db')
 
