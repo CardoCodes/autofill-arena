@@ -16,3 +16,4 @@ node_modules/
 /extension/out/
 .db
 backend/autofill-arena.db
+uml_form_detection.py

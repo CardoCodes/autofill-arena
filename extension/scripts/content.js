@@ -297,13 +297,45 @@
     el.parentElement?.appendChild(hint)
   }
 
-  chrome.runtime.onMessage.addListener((request) => {
+  async function detectStatus() {
+    const apiBase = await getApiBase()
+    const url = location.href
+    const title = document.title || ''
+    let content = ''
+    try {
+      content = document.body ? (document.body.innerText || '') : ''
+    } catch {}
+    if (content.length > 5000) content = content.slice(0, 5000)
+    const fields = extractFields()
+    try {
+      const resp = await fetch(`${apiBase}/detect/forms`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url, title, content, fields })
+      })
+      if (!resp.ok) throw new Error('detect failed')
+      const data = await resp.json()
+      return { ok: true, url, detection: data }
+    } catch (e) {
+      return { ok: false, url, error: String(e && e.message || e) }
+    }
+  }
+
+  chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
     if (request.action === 'scanAndFill') {
       planAndFill()
     }
     if (request.action === 'toggleOverlay') {
       toggleOverlay()
     }
+    if (request.action === 'detectStatus') {
+      ;(async () => {
+        const result = await detectStatus()
+        try { sendResponse(result) } catch {}
+      })()
+      return true
+    }
+    return false
   })
 
   // After filling, if password was generated, save credentials
