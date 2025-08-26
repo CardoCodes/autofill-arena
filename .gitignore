@@ -14,6 +14,6 @@ extension/.next
 node_modules/
 /extension/_next/
 /extension/out/
-.db
+*.db
 backend/autofill-arena.db
 uml_form_detection.py
