@@ -122,6 +122,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthStateChange }) => {
               onForgotPassword={() => setAuthMode("reset-password")}
             />
 
+
             {authMode !== "reset-password" && (
               <>
                 <div className="relative my-6">

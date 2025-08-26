@@ -4,7 +4,7 @@ import React from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Loader2, ArrowRight } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 
 interface Props {
   authMode: 'signin' | 'signup' | 'reset-password'
@@ -48,7 +48,7 @@ export function EmailForm({ authMode, email, password, fullName, loading, onChan
         </div>
       )}
 
-      <Button type="submit" className="w-full text-[#282a36] transition-all duration-300 hover:shadow-[0_0_15px_rgba(80,250,123,0.4)] border-0 relative overflow-hidden">
+      <Button type="submit" className="w-full bg-[#bd93f9] hover:bg-[#bd93f9]/90 text-[#282a36] transition-all duration-300 hover:shadow-[0_0_15px_rgba(80,250,123,0.4)] border-0 relative overflow-hidden">
         {loading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -57,7 +57,6 @@ export function EmailForm({ authMode, email, password, fullName, loading, onChan
         ) : (
           <>
             {authMode === 'signin' ? 'Sign In' : authMode === 'signup' ? 'Create Account' : 'Reset Password'}
-            <ArrowRight className="ml-2 h-4 w-4" />
           </>
         )}
       </Button>
