@@ -8,10 +8,14 @@ const app = express()
 app.use(cors({ origin: true }))
 app.use(express.json({ limit: '2mb' }))
 
-const db = new Database('autofill-arena.db')
+const dbPath = process.env.DB_PATH || 'autofill-arena.db'
+const db = new Database(dbPath)
 
 // Health
-app.get('/health', (_req, res) => res.json({ ok: true }))
+app.get('/health', (_req, res) => {
+  const dbOk = db.ping()
+  res.json({ ok: true, db: dbOk ? 'up' : 'down' })
+})
 
 // Profile CRUD (local-only)
 app.get('/profile', (_req, res) => {
@@ -19,7 +23,7 @@ app.get('/profile', (_req, res) => {
   res.json({ profile })
 })
 
-app.put('/profile', (req, res) => {
+app.put('/profile', (req, res, next) => {
   const schema = z.object({
     profile: z.object({
       first_name: z.string().optional(),
@@ -33,9 +37,13 @@ app.put('/profile', (req, res) => {
       github: z.string().optional()
     })
   })
-  const { profile } = schema.parse(req.body)
-  db.upsertProfile(profile)
-  res.json({ ok: true })
+  try {
+    const { profile } = schema.parse(req.body)
+    db.upsertProfile(profile)
+    res.json({ ok: true })
+  } catch (err) {
+    next(err)
+  }
 })
 
 // Answers CRUD
@@ -44,13 +52,17 @@ app.get('/answers', (_req, res) => {
   res.json({ answers })
 })
 
-app.put('/answers', (req, res) => {
+app.put('/answers', (req, res, next) => {
   const schema = z.object({
     answers: z.record(z.string(), z.string())
   })
-  const { answers } = schema.parse(req.body)
-  db.upsertAnswers(answers)
-  res.json({ ok: true })
+  try {
+    const { answers } = schema.parse(req.body)
+    db.upsertAnswers(answers)
+    res.json({ ok: true })
+  } catch (err) {
+    next(err)
+  }
 })
 
 // Rules CRUD
@@ -60,7 +72,7 @@ app.get('/rules', (req, res) => {
   res.json({ rules })
 })
 
-app.post('/rules', (req, res) => {
+app.post('/rules', (req, res, next) => {
   const schema = z.object({
     rule: z.object({
       site_pattern: z.string(),
@@ -83,13 +95,17 @@ app.post('/rules', (req, res) => {
       }))
     })
   })
-  const { rule } = schema.parse(req.body)
-  const saved = db.insertRule(rule)
-  res.json({ rule: saved })
+  try {
+    const { rule } = schema.parse(req.body)
+    const saved = db.insertRule(rule)
+    res.json({ rule: saved })
+  } catch (err) {
+    next(err)
+  }
 })
 
 // Fill plan from features
-app.post('/fill/plan', (req, res) => {
+app.post('/fill/plan', (req, res, next) => {
   const schema = z.object({
     url: z.string().url(),
     fields: z.array(z.object({
@@ -103,35 +119,47 @@ app.post('/fill/plan', (req, res) => {
       data_attrs: z.record(z.string()).optional()
     }))
   })
-  const payload = schema.parse(req.body)
-  const profile = db.getProfile()
-  const answers = db.listAnswers()
-  const domain = new URL(payload.url).hostname
-  const rules = [
-    ...db.listRulesByDomain(domain),
-    ...db.listRulesByDomain('*')
-  ]
-  const plan = createFillPlan(payload, { profile, answers, rules, db })
-  res.json(plan)
+  try {
+    const payload = schema.parse(req.body)
+    const profile = db.getProfile()
+    const answers = db.listAnswers()
+    const domain = new URL(payload.url).hostname
+    const rules = [
+      ...db.listRulesByDomain(domain),
+      ...db.listRulesByDomain('*')
+    ]
+    const plan = createFillPlan(payload, { profile, answers, rules, db })
+    res.json(plan)
+  } catch (err) {
+    next(err)
+  }
 })
 
 // Learn a new mapping
-app.post('/learn', (req, res) => {
+app.post('/learn', (req, res, next) => {
   const schema = z.object({
     domain: z.string(),
     mapping: z.object({ selector: z.string(), field_key: z.string(), type: z.string().optional() })
   })
-  const { domain, mapping } = schema.parse(req.body)
-  db.insertLearnedMapping(domain, mapping)
-  res.json({ ok: true })
+  try {
+    const { domain, mapping } = schema.parse(req.body)
+    db.insertLearnedMapping(domain, mapping)
+    res.json({ ok: true })
+  } catch (err) {
+    next(err)
+  }
 })
 
 // Credentials save and list
-app.post('/credentials', (req, res) => {
+app.post('/credentials', (req, res, next) => {
   const schema = z.object({ domain: z.string(), username: z.string().optional(), password: z.string().min(8) })
-  const { domain, username, password } = schema.parse(req.body)
-  const saved = db.insertCredential({ domain, username, password })
-  res.json({ credential: saved })
+  try {
+    const { domain, username, password } = schema.parse(req.body)
+    const saved = db.insertCredential({ domain, username, password })
+    res.json({ credential: saved })
+  } catch (err) {
+    next(err)
+  }
 })
 
 app.get('/credentials', (req, res) => {
@@ -144,6 +172,15 @@ app.get('/credentials', (req, res) => {
 const port = process.env.PORT || 5123
 app.listen(port, () => {
   console.log(`[autofill-backend] listening on http://localhost:${port}`)
+})
+
+// Global error handler
+// eslint-disable-next-line no-unused-vars
+app.use((err, _req, res, _next) => {
+  if (err?.name === 'ZodError') {
+    return res.status(400).json({ error: 'validation_error', issues: err.issues })
+  }
+  return res.status(500).json({ error: 'internal_error' })
 })
 
 

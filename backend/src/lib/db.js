@@ -113,6 +113,17 @@ export class Database {
     return this.db.prepare('SELECT id, domain, username, created_at FROM credentials WHERE domain = @domain ORDER BY created_at DESC')
       .all({ domain })
   }
+
+  // Lightweight connectivity check
+  ping() {
+    try {
+      // Run a very cheap query to assert the DB is responsive
+      this.db.prepare('SELECT 1').get()
+      return true
+    } catch {
+      return false
+    }
+  }
 }
 
 
