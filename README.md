@@ -14,8 +14,8 @@ AI-powered browser extension that automates job applications with smart form fil
 
 1. Clone and install:
 ```bash
-git clone https://github.com/cardocodes/middleai.git
-cd middleai/extension
+git clone https://github.com/cardocodes/autofill-arena.git
+cd autofill-arena/extension
 npm install --legacy-peer-deps
 ```
 
@@ -29,6 +29,24 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
 3. Start development:
 ```bash
 npm run dev
+```
+
+## Backend Quick Start
+
+From the project root:
+
+```bash
+cd backend
+npm install
+npm run init   # seed a sample profile and answers into the local DB
+npm run start  # starts on http://localhost:${PORT:-5123}
+```
+
+Health check:
+
+```bash
+curl http://localhost:5123/health
+# { "ok": true }
 ```
 
 ## Loading the Extension

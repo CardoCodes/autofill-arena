@@ -1,8 +1,6 @@
 node_modules/
 dist/
 .vscode/launch.json
-.gitignore
-backend/core/__pycache__
 backend/core/__pycache__
 backend/data
 extension/node_modules
@@ -11,7 +9,6 @@ extension/.next
 .env.local
 .vscode/
 .cursor/
-node_modules/
 /extension/_next/
 /extension/out/
 *.db
